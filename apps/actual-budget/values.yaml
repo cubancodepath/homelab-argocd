@@ -8,8 +8,8 @@ actualBudget:
     fileSizeLimitMB: 20
   openid:
     enabled: true
-    discoveryUrl: "https://auth.cubancodelab.net/application/o/actual-budget/"
-    clientId: "HuMGawyXSd5V37nIgM7MiTj2lzn0ptZEOJXAbiH7"
+    discoveryUrl: "https://auth.cubancodelab.net/application/o/actual/"
+    clientId: "fduYyiFLpLkd2JKDV4v7uCujWpOSGh4qVEWV9rI8"
     serverHostname: "https://actual.cubancodelab.net"
     clientSecret:
       existingSecret: "actual-budget-openid-secret"

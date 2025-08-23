@@ -549,3 +549,91 @@ bazarr:
       enabled: true
       existingClaim: "shared-media-pvc"
 
+transmission-openvpn:
+  enabled: true
+  image:
+    tag: "latest"
+
+  env:
+    CREATE_TUN_DEVICE: "false"
+    TZ: "Asia/Dubai"
+
+  ingress:
+    enabled: true
+    className: "traefik"
+    annotations:
+      traefik.ingress.kubernetes.io/router.entrypoints: "web, websecure"
+      traefik.ingress.kubernetes.io/router.tls: "true"
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+    host: transmission.cubancodelab.net
+    tls:
+      enabled: true
+      secretName: transmission-tls
+
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: "longhorn"
+
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+  livenessProbe:
+    httpGet:
+      path: /transmission/web/
+      port: 9091
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 3
+
+  readinessProbe:
+    tcpSocket:
+      port: 9091
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  openvpn:
+    provider: "NORDVPN"
+    credentials:
+      create: false
+      existingSecret: "nordvpn-credentials"
+    config:
+      NORDVPN_COUNTRY: "NL"
+      NORDVPN_CATEGORY: "legacy_p2p"
+      NORDVPN_PROTOCOL: "udp"
+      OPENVPN_OPTS: "--inactive 3600 --ping 10 --ping-exit 60"
+
+  transmission:
+    settings:
+      TRANSMISSION_SPEED_LIMIT_UP: "2048"
+      TRANSMISSION_SPEED_LIMIT_DOWN: "8192"
+      TRANSMISSION_RATIO_LIMIT: "2"
+      TRANSMISSION_RATIO_LIMIT_ENABLED: "true"
+      TRANSMISSION_DOWNLOAD_DIR: "/downloads"
+      TRANSMISSION_INCOMPLETE_DIR: "/downloads/incomplete"
+      TRANSMISSION_WATCH_DIR: "/data/watch"
+      TRANSMISSION_RPC_AUTHENTICATION_REQUIRED: "false"
+      TRANSMISSION_RPC_HOST_WHITELIST_ENABLED: "false"
+      TRANSMISSION_RPC_URL: "/transmission/"
+
+  extraEnv:
+    LOCAL_NETWORK: "192.168.0.0/16,10.0.0.0/8,172.16.0.0/12"
+    TRANSMISSION_UMASK: "002"
+
+  extraVolumes:
+    - name: shared-media
+      persistentVolumeClaim:
+        claimName: shared-media-pvc
+
+  extraVolumeMounts:
+    - name: shared-media
+      mountPath: /downloads
+      subPath: downloads

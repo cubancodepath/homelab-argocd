@@ -38,3 +38,7 @@ dependencies:
     version: 0.1.2
     repository: https://helms.cubancodelab.net/
     condition: bazarr.enabled
+  - name: transmission-openvpn
+    version: 0.1.0
+    repository: https://helms.cubancodelab.net/
+    condition: transmission-openvpn.enabled
