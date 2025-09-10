@@ -43,7 +43,7 @@ jellyfin:
       enabled: true
       storageClass: "longhorn"
       accessMode: ReadWriteOnce
-      size: 1Gi
+      size: 10Gi
     
     cache:
       emptyDir:
