@@ -1,3 +1,6 @@
+image:
+  pullPolicy: always
+
 actualBudget:
   port: 5006
   loginMethod: "openid"
