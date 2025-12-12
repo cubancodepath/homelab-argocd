@@ -1,5 +1,5 @@
 image:
-  pullPolicy: always
+  pullPolicy: Always
 
 actualBudget:
   port: 5006
