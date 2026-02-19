@@ -11,7 +11,7 @@ services:
   dns:
     enabled: true
     type: LoadBalancer
-    loadBalancerIP: 10.2.0.53
+    loadBalancerIP: 10.5.1.53
 
 ingress:
   enabled: true 

@@ -91,9 +91,9 @@ helm install csi-driver-nfs csi-driver-nfs/csi-driver-nfs --namespace kube-syste
 ### NAS Configuration
 Configure NFS exports on your NAS:
 ```bash
-/volume1/k3s-ssd    192.168.1.0/24(rw,sync,no_subtree_check,no_root_squash)
-/volume2/k3s-hdd    192.168.1.0/24(rw,sync,no_subtree_check,no_root_squash)
-/volume2/media      192.168.1.0/24(rw,sync,no_subtree_check,no_root_squash)
+/volume1/k3s-ssd    10.5.1.0/24(rw,sync,no_subtree_check,no_root_squash)
+/volume2/k3s-hdd    10.5.1.0/24(rw,sync,no_subtree_check,no_root_squash)
+/volume2/media      10.5.1.0/24(rw,sync,no_subtree_check,no_root_squash)
 ```
 
 ## 📋 Deployment
@@ -186,7 +186,7 @@ kubectl get pods -o wide | grep jellyfin
 
 ### Compute Nodes
 
-#### Primary Node - cubancodelab3 (10.2.0.22)
+#### Primary Node - cubancodelab3 (10.5.1.10)
 - **CPU**: Intel Core i5-1250P (12th Gen) - 16 cores
 - **RAM**: 32GB (25GB available)
 - **Storage**: 477GB NVMe SSD (100GB allocated to system)
@@ -195,7 +195,7 @@ kubectl get pods -o wide | grep jellyfin
 - **OS**: Ubuntu Server with K3s
 - **GPU Resources**: `gpu.intel.com/i915: 1` + monitoring
 
-#### Secondary Node - cubancodelab2 (10.2.0.21)
+#### Secondary Node - cubancodelab2 (10.5.1.11)
 - **CPU**: Intel Core i5-6260U @ 1.80GHz - 4 cores
 - **RAM**: 24GB (21GB available)
 - **Storage**: 112GB SSD
@@ -226,10 +226,10 @@ kubectl get pods -o wide | grep jellyfin
 - **Power efficiency**: ~60% CPU reduction vs software
 
 ### Network Configuration
-- **Cluster Network**: 10.2.0.0/24 VLAN
-- **Primary Node**: 10.2.0.22/24
-- **Secondary Node**: 10.2.0.21/24
-- **NAS**: 10.2.0.20
+- **Cluster Network**: 10.5.1.0/24 VLAN
+- **Primary Node**: 10.5.1.10/24
+- **Secondary Node**: 10.5.1.11/24
+- **NAS**: 10.5.1.5
 - **Load Balancing**: MetalLB for bare metal deployments
 
 ## 🎮 Media Stack Performance
