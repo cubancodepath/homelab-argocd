@@ -8,7 +8,7 @@ global:
 
 auth:
   username: postgres
-  database: ""
+  database: postgres
   password: ""
   existingSecret: postgresql-secret
   secretKeys:
@@ -36,6 +36,6 @@ primary:
         -- Additional databases and users will be created as needed
 
 metrics:
-  enabled: true
+  enabled: false
   serviceMonitor:
     enabled: false
