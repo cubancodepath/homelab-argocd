@@ -1,4 +1,5 @@
 global:
+  imageRegistry: public.ecr.aws
   postgresql:
     auth:
       existingSecret: postgresql-secret
@@ -16,6 +17,10 @@ auth:
     userPasswordKey: password
 
 primary:
+  image:
+    registry: public.ecr.aws
+    repository: bitnami/postgresql
+    tag: 16.2.0-debian-12-r15
   persistence:
     enabled: true
     size: 5Gi
