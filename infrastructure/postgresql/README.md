@@ -26,14 +26,29 @@ kubectl create secret generic postgresql-secret \
   kubeseal --controller-name=sealed-secrets --controller-namespace=kube-system -o yaml
 ```
 
+## Creación de bases de datos y usuarios
+
+Para crear una nueva base de datos y un usuario dedicado para una aplicación:
+
+```bash
+# Obtener la contraseña de admin
+export POSTGRES_PASSWORD=$(kubectl get secret postgresql-secret -n database -o jsonpath="{.data.password}" | base64 --decode)
+
+# Crear usuario y base de datos
+kubectl exec -it postgresql-0 -n database -- env PGPASSWORD=$POSTGRES_PASSWORD psql -U postgres -c "CREATE USER nombre_app WITH PASSWORD 'password_seguro';"
+kubectl exec -it postgresql-0 -n database -- env PGPASSWORD=$POSTGRES_PASSWORD psql -U postgres -c "CREATE DATABASE nombre_app OWNER nombre_app;"
+kubectl exec -it postgresql-0 -n database -- env PGPASSWORD=$POSTGRES_PASSWORD psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE nombre_app TO nombre_app;"
+```
+
 ## Conexión desde aplicaciones
 
 Las aplicaciones que usen PostgreSQL deben:
 
 1. Usar como hostname: `postgresql.database.svc.cluster.local`
-2. Usuario: `postgres`
-3. Contraseña: desde el secret `postgresql-secret`
+2. Usuario: El usuario dedicado creado (ej. `authentik`)
+3. Contraseña: La contraseña definida durante la creación
 4. Puerto: `5432`
+5. Base de datos: La base de datos dedicada (ej. `authentik`)
 
 Ejemplo en application.yaml:
 
@@ -44,21 +59,11 @@ env:
   - name: DATABASE_PORT
     value: "5432"
   - name: DATABASE_USER
-    value: postgres
+    value: nombre_app
   - name: DATABASE_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: postgresql-secret
-        key: password
-```
-
-## Creación de bases de datos
-
-Para crear una nueva base de datos para una aplicación:
-
-```bash
-kubectl exec -it postgresql-0 -n database -- \
-  psql -U postgres -c "CREATE DATABASE nombre_app;"
+    value: "password_seguro"
+  - name: DATABASE_NAME
+    value: nombre_app
 ```
 
 ## Monitoreo
