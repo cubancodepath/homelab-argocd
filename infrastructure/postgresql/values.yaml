@@ -1,0 +1,41 @@
+global:
+  postgresql:
+    auth:
+      existingSecret: postgresql-secret
+      secretKeys:
+        adminPasswordKey: password
+        userPasswordKey: password
+
+auth:
+  username: postgres
+  database: ""
+  password: ""
+  existingSecret: postgresql-secret
+  secretKeys:
+    adminPasswordKey: password
+    userPasswordKey: password
+
+primary:
+  persistence:
+    enabled: true
+    size: 50Gi
+    storageClassName: longhorn
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+
+  initdb:
+    scripts:
+      init.sql: |
+        -- Create default user for applications
+        -- Additional databases and users will be created as needed
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: false

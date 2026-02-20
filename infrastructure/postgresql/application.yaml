@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: postgresql
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: default
+  sources:
+    - repoURL: https://charts.bitnami.com/bitnami
+      chart: postgresql
+      targetRevision: 15.1.0
+      helm:
+        valueFiles:
+          - $values/infrastructure/postgresql/values.yaml
+    - repoURL: git@github.com:barbar0jav1er/homelab-argocd.git
+      targetRevision: HEAD
+      ref: values
+    - repoURL: git@github.com:barbar0jav1er/homelab-argocd.git
+      targetRevision: HEAD
+      path: infrastructure/postgresql/config
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: database
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - RespectIgnoreDifferences=true
