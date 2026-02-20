@@ -13,7 +13,7 @@ actualBudget:
   openid:
     enabled: true
     discoveryUrl: "https://auth.cubancodelab.net/application/o/actual/"
-    clientId: "fduYyiFLpLkd2JKDV4v7uCujWpOSGh4qVEWV9rI8"
+    clientId: "rt6F5byTR1t98VQDiIPywwORg647eAxKBWeCBzls"
     serverHostname: "https://actual.cubancodelab.net"
     clientSecret:
       existingSecret: "actual-budget-openid-secret"
