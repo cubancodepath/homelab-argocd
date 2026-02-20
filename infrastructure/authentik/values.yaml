@@ -44,6 +44,10 @@ worker:
 # PostgreSQL configuration
 postgresql:
   enabled: true
+  image:
+    registry: docker.io
+    repository: bitnami/postgresql
+    tag: latest
   auth:
     username: authentik
     database: authentik
@@ -63,7 +67,11 @@ redis:
     enabled: true
     existingSecret: authentik
     existingSecretPasswordKey: redis-password
-  primary:
+  master:
     persistence:
       enabled: true
       size: 8Gi
+    image:
+      registry: docker.io
+      repository: bitnami/redis
+      tag: latest
