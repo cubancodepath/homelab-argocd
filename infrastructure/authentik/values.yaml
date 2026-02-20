@@ -1,0 +1,75 @@
+global:
+  deploymentAnnotations:
+    secret.reloader.stakater.com/reload: "authentik"
+
+# Authentik configuration
+authentik:
+  enabled: false  # We'll use external secret with envFrom
+
+server:
+  envFrom:
+    - secretRef:
+        name: authentik
+
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+      traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
+      traefik.ingress.kubernetes.io/router.tls: "true"
+    hosts:
+      - auth.cubancodelab.net
+    paths:
+      - /
+    pathType: Prefix
+    tls:
+      - secretName: authentik-tls
+        hosts:
+          - auth.cubancodelab.net
+
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+worker:
+  envFrom:
+    - secretRef:
+        name: authentik
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 300m
+      memory: 512Mi
+
+# PostgreSQL configuration - use external PostgreSQL
+postgresql:
+  enabled: false
+
+# Redis configuration
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    existingSecret: authentik
+    existingSecretPasswordKey: redis-password
+  master:
+    persistence:
+      enabled: true
+      size: 5Gi
+      storageClassName: longhorn
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
