@@ -19,7 +19,7 @@ primary:
   persistence:
     enabled: true
     size: 50Gi
-    storageClassName: longhorn
+    storageClassName: longhorn-2replicas
 
   resources:
     requests:
@@ -39,3 +39,6 @@ metrics:
   enabled: false
   serviceMonitor:
     enabled: false
+
+volumePermissions:
+  enabled: false
