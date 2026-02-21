@@ -19,7 +19,7 @@ dependencies:
     repository: https://helms.cubancodelab.net/
     condition: sonarr.enabled
   - name: seerr
-    version: 0.1.5
+    version: 0.1.6
     repository: https://helms.cubancodelab.net/
     condition: seerr.enabled
   - name: prowlarr

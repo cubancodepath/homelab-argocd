@@ -218,6 +218,11 @@ seerr:
     PGID: "1000"
     TZ: "Asia/Dubai"
 
+  podSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+
   database:
     type: "postgres"
     postgres:
