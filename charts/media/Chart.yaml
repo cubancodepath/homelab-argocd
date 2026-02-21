@@ -1,6 +1,6 @@
 apiVersion: v2
 name: media
-description: A Helm umbrella chart for media management stack (Jellyfin, Radarr, Sonarr, Jellyseerr, Prowlarr, qBittorrent, Bazarr, Flaresolverr)
+description: A Helm umbrella chart for media management stack (Jellyfin, Radarr, Sonarr, Seerr, Prowlarr, qBittorrent, Bazarr, Flaresolverr)
 type: application
 version: 0.1.0
 appVersion: "1.0"
@@ -18,10 +18,10 @@ dependencies:
     version: 0.1.2
     repository: https://helms.cubancodelab.net/
     condition: sonarr.enabled
-  - name: jellyseerr
-    version: 0.1.1
+  - name: seerr
+    version: 0.1.3
     repository: https://helms.cubancodelab.net/
-    condition: jellyseerr.enabled
+    condition: seerr.enabled
   - name: prowlarr
     version: 0.1.2
     repository: https://helms.cubancodelab.net/

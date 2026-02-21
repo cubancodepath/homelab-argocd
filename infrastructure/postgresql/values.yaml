@@ -37,8 +37,8 @@ primary:
   initdb:
     scripts:
       init.sql: |
-        -- Create default user for applications
-        -- Additional databases and users will be created as needed
+        -- Create database for Authentik
+        CREATE DATABASE authentik;
 
 metrics:
   enabled: false

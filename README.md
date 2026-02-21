@@ -66,7 +66,7 @@ Complete media management suite with **hardware transcoding**:
 - **Jellyfin** - Media server with Intel Quick Sync Video support
 - **Radarr** - Movie collection manager
 - **Sonarr** - TV show collection manager
-- **Jellyseerr** - Request management
+- **Seerr** - Request management
 - **Prowlarr** - Indexer manager
 - **qBittorrent** - Download client
 

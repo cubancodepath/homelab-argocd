@@ -38,6 +38,17 @@ export POSTGRES_PASSWORD=$(kubectl get secret postgresql-secret -n database -o j
 kubectl exec -it postgresql-0 -n database -- env PGPASSWORD=$POSTGRES_PASSWORD psql -U postgres -c "CREATE USER nombre_app WITH PASSWORD 'password_seguro';"
 kubectl exec -it postgresql-0 -n database -- env PGPASSWORD=$POSTGRES_PASSWORD psql -U postgres -c "CREATE DATABASE nombre_app OWNER nombre_app;"
 kubectl exec -it postgresql-0 -n database -- env PGPASSWORD=$POSTGRES_PASSWORD psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE nombre_app TO nombre_app;"
+
+### Ejemplo para Seerr:
+
+```bash
+# Obtener contraseña admin
+export POSTGRES_PASSWORD=$(kubectl get secret postgresql-secret -n database -o jsonpath="{.data.password}" | base64 --decode)
+
+# Crear base de datos y usuario
+kubectl exec -it postgresql-0 -n database -- env PGPASSWORD=$POSTGRES_PASSWORD psql -U postgres -c "CREATE USER seerr WITH PASSWORD 'seerr_password_seguro';"
+kubectl exec -it postgresql-0 -n database -- env PGPASSWORD=$POSTGRES_PASSWORD psql -U postgres -c "CREATE DATABASE seerr OWNER seerr;"
+```
 ```
 
 ## Conexión desde aplicaciones

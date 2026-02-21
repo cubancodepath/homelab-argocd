@@ -80,7 +80,7 @@ kubectl get applications -n argocd -o wide
 
 ### Custom Helm Charts
 - `charts/homelab-app/` - Generic chart for simple applications with ingress
-- `charts/media-stack/` - Comprehensive chart for media management services (Jellyfin, Radarr, Sonarr, Jellyseerr, Prowlarr, qBittorrent)
+- `charts/media-stack/` - Comprehensive chart for media management services (Jellyfin, Radarr, Sonarr, Seerr, Prowlarr, qBittorrent)
 
 ### Security Model
 - All secrets are encrypted using SealedSecrets and stored in `config/` directories
@@ -182,7 +182,7 @@ All commits must follow the Conventional Commits specification:
 
 **Examples:**
 ```
-feat(media-stack): add jellyseerr service to media stack chart
+feat(media-stack): add seerr service to media stack chart
 fix(traefik): resolve ingress routing issue for authentik
 docs: update sealed secrets usage guide
 chore(cert-manager): update to v1.13.0

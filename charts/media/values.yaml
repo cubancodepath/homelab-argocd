@@ -201,22 +201,32 @@ sonarr:
       enabled: true
       existingClaim: "shared-media-pvc"
 
-# Jellyseerr - Request management for Plex/Jellyfin
-jellyseerr:
+# Seerr - Request management for Plex/Jellyfin
+seerr:
   enabled: true
   nameOverride: ""
   fullnameOverride: ""
   replicaCount: 1
   
   image:
-    repository: fallenbagel/jellyseerr
-    tag: latest
+    repository: ghcr.io/seerr-team/seerr
+    tag: "3.0.1"
     pullPolicy: IfNotPresent
   
   env:
     PUID: "1000"
     PGID: "1000"
     TZ: "Asia/Dubai"
+
+  database:
+    type: "postgres"
+    postgres:
+      host: "postgresql.database.svc.cluster.local"
+      port: 5432
+      user: "seerr"
+      database: "seerr"
+      existingSecret: "seerr-db-secret"
+      passwordKey: "password"
   
   service:
     type: ClusterIP
@@ -228,10 +238,10 @@ jellyseerr:
     annotations:
       cert-manager.io/cluster-issuer: "letsencrypt-prod"
       traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
-    host: jellyseerr.cubancodelab.net
+    host: seerr.cubancodelab.net
     tls:
       enabled: true
-      secretName: jellyseerr-tls
+      secretName: seerr-tls
   
   persistence:
     config:
