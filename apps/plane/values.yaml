@@ -8,7 +8,9 @@ postgres:
   # storageClass: "nfs-ssd-fast"
 
 minio:
-  local_setup: false
+  local_setup: true
+  storageClass: ""
+  volumeSize: "20Gi"
   env:
     minio_endpoint_ssl: false
 
@@ -28,8 +30,8 @@ env:
   # External PostgreSQL connection (provided via secret)
   pgdb_remote_url: ""
 
-  # External MinIO/S3 configuration
-  aws_s3_endpoint_url: "http://minio.storage.svc.cluster.local:9000"
+  # MinIO configuration - points to local MinIO instance
+  aws_s3_endpoint_url: "http://plane-minio-wl:9000"
   aws_region: "us-east-1"
   docstore_bucket: "plane-uploads"
   doc_upload_size_limit: "5242880"
