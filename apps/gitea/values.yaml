@@ -34,11 +34,11 @@ ingress:
       hosts:
         - git.cubancodelab.net
 
-# Disable local PostgreSQL and Redis - use external
-postgresql:
+# Disable ALL subcharts - use external services only
+postgresql-ha:
   enabled: false
 
-redis:
+redis-cluster:
   enabled: false
 
 # Gitea configuration via environment variables and config
