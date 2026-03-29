@@ -1,25 +1,7 @@
-# Gitea Helm Chart Configuration - Using External PostgreSQL
+# Gitea Helm Chart Configuration
 # Reference: https://gitea.com/gitea/helm-chart
-#
-# This configuration uses an external PostgreSQL database instead of the
-# embedded PostgreSQL-HA and Redis cluster included in the full chart.
 
 replicaCount: 1
-
-image:
-  repository: gitea/gitea
-  tag: 1.21.4
-
-# Completely disable subcharts by using Bitnami's simpler Gitea chart
-# Or by configuring the full chart with external databases
-
-service:
-  http:
-    type: ClusterIP
-    port: 3000
-  ssh:
-    type: ClusterIP
-    port: 2222
 
 # Ingress configuration - Traefik + cert-manager
 ingress:
@@ -39,46 +21,55 @@ ingress:
       hosts:
         - git.cubancodelab.net
 
-# Disable all bundled dependencies
-postgresql:
+# Disable bundled PostgreSQL-HA and Valkey subcharts
+postgresql-ha:
   enabled: false
 
-redis:
+valkey-cluster:
   enabled: false
 
-memcached:
+valkey:
   enabled: false
-
-# External database configuration
-externalDatabase:
-  type: postgres
-  host: postgresql.database.svc.cluster.local
-  port: 5432
-  database: gitea
-  user: gitea
-  existingSecret: gitea-config
-  existingSecretKey: database-password
 
 # Gitea configuration
 gitea:
+  admin:
+    existingSecret: gitea-config
+    username: gitea-admin
+    email: admin@git.cubancodelab.net
+
   config:
     server:
       DOMAIN: git.cubancodelab.net
       SSH_DOMAIN: git.cubancodelab.net
       ROOT_URL: https://git.cubancodelab.net/
-      SSH_PORT: 2222
+      SSH_PORT: 22
+      SSH_LISTEN_PORT: 2222
       HTTP_PORT: 3000
-      DISABLE_REGISTRATION: "false"
+    database:
+      DB_TYPE: postgres
+      HOST: postgresql.database.svc.cluster.local:5432
+      NAME: gitea
+      USER: gitea
+      SSL_MODE: disable
+      # PASSWD injected via additionalConfigFromEnvs below
     security:
       INSTALL_LOCK: "true"
       PASSWORD_HASH_ALGO: pbkdf2
-    service:
-      DISABLE_REGISTRATION: "false"
-      ALLOW_REGISTRATION_WITHOUT_EMAIL: "true"
     session:
       PROVIDER: db
     cache:
       ADAPTER: memory
+    queue:
+      TYPE: channel
+
+  # Inject DB password from sealed secret via env var
+  additionalConfigFromEnvs:
+    - name: GITEA__DATABASE__PASSWD
+      valueFrom:
+        secretKeyRef:
+          name: gitea-config
+          key: db-password
 
 # Persistence (for git repos and attachments)
 persistence:
