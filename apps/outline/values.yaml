@@ -54,7 +54,7 @@ auth:
   oidc:
     enabled: true
     clientId: "rpM4pWEYyf8pVMqiVDOuEAJoatEQCt5tix73OKEp"
-    authUri: "https://auth.cubancodelab.net/application/o/outline/authorize/"
+    authUri: "https://auth.cubancodelab.net/application/o/authorize/"
     tokenUri: "https://auth.cubancodelab.net/application/o/token/"
     userInfoUri: "https://auth.cubancodelab.net/application/o/userinfo/"
     logoutUri: "https://auth.cubancodelab.net/application/o/outline/end-session/"
