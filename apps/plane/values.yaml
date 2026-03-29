@@ -47,6 +47,9 @@ env:
   secure_browser_xss_filter: "1"
   content_security_policy_enabled: "1"
 
+  # AMQP/RabbitMQ configuration
+  amqp_url: "amqp://guest:guest@plane-rabbitmq:5672/"
+
 # Reference existing secrets for sensitive values
 external_secrets:
   app_env_existingSecret: "plane-app-secret"
