@@ -1,5 +1,8 @@
-# Gitea Helm Chart Configuration
+# Gitea Helm Chart Configuration - Using External PostgreSQL
 # Reference: https://gitea.com/gitea/helm-chart
+#
+# This configuration uses an external PostgreSQL database instead of the
+# embedded PostgreSQL-HA and Redis cluster included in the full chart.
 
 replicaCount: 1
 
@@ -7,7 +10,9 @@ image:
   repository: gitea/gitea
   tag: 1.21.4
 
-# Service configuration
+# Completely disable subcharts by using Bitnami's simpler Gitea chart
+# Or by configuring the full chart with external databases
+
 service:
   http:
     type: ClusterIP
@@ -34,14 +39,27 @@ ingress:
       hosts:
         - git.cubancodelab.net
 
-# Disable ALL subcharts - use external services only
-postgresql-ha:
+# Disable all bundled dependencies
+postgresql:
   enabled: false
 
-redis-cluster:
+redis:
   enabled: false
 
-# Gitea configuration via environment variables and config
+memcached:
+  enabled: false
+
+# External database configuration
+externalDatabase:
+  type: postgres
+  host: postgresql.database.svc.cluster.local
+  port: 5432
+  database: gitea
+  user: gitea
+  existingSecret: gitea-config
+  existingSecretKey: database-password
+
+# Gitea configuration
 gitea:
   config:
     server:
@@ -51,14 +69,6 @@ gitea:
       SSH_PORT: 2222
       HTTP_PORT: 3000
       DISABLE_REGISTRATION: "false"
-      ENABLE_GZIP: "true"
-    database:
-      DB_TYPE: postgres
-      HOST: postgresql.database.svc.cluster.local:5432
-      NAME: gitea
-      USER: gitea
-      SSL_MODE: disable
-      # PASSWORD loaded from secret
     security:
       INSTALL_LOCK: "true"
       PASSWORD_HASH_ALGO: pbkdf2
@@ -69,23 +79,12 @@ gitea:
       PROVIDER: db
     cache:
       ADAPTER: memory
-    log:
-      MODE: console
-      LEVEL: info
-
-  # Use external secret for sensitive values
-  existingSecret: gitea-config
-  secretKey: database-password
-  secretAdminKey: admin-password
-  secretSecretKeyKey: secret-key
-  secretInternalTokenKey: internal-token
 
 # Persistence (for git repos and attachments)
 persistence:
   enabled: true
   storageClassName: longhorn
   size: 20Gi
-  mountPath: /data
 
 # Resource limits
 resources:
