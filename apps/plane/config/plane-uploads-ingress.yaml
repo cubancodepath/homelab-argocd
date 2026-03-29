@@ -1,0 +1,71 @@
+---
+# Ingress patch para agregar ruta /plane-uploads al API
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: plane-ingress
+  namespace: plane
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 5m
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: plane.cubancodelab.net
+    http:
+      paths:
+      - backend:
+          service:
+            name: plane-web
+            port:
+              number: 3000
+        path: /
+        pathType: Prefix
+      - backend:
+          service:
+            name: plane-api
+            port:
+              number: 8000
+        path: /api
+        pathType: Prefix
+      - backend:
+          service:
+            name: plane-api
+            port:
+              number: 8000
+        path: /auth
+        pathType: Prefix
+      - backend:
+          service:
+            name: plane-api
+            port:
+              number: 8000
+        path: /plane-uploads
+        pathType: Prefix
+      - backend:
+          service:
+            name: plane-live
+            port:
+              number: 3000
+        path: /live/
+        pathType: Prefix
+      - backend:
+          service:
+            name: plane-space
+            port:
+              number: 3000
+        path: /spaces
+        pathType: Prefix
+      - backend:
+          service:
+            name: plane-admin
+            port:
+              number: 3000
+        path: /god-mode
+        pathType: Prefix
+  tls:
+  - hosts:
+    - plane.cubancodelab.net
+    secretName: plane-tls
