@@ -40,8 +40,12 @@ env:
   enable_signup: "1"
   enable_email_password: "1"
 
-  # Web URL for OIDC redirects and app URLs
+  # Web URL for OIDC redirects and app URLs (must match ingress host)
   web_url: "https://plane.cubancodelab.net"
+
+  # Force HTTPS
+  secure_browser_xss_filter: "1"
+  content_security_policy_enabled: "1"
 
 # Reference existing secrets for sensitive values
 external_secrets:
