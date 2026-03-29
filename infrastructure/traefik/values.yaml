@@ -15,6 +15,11 @@ ports:
     port: 443
     expose:
       default: true
+  ssh:
+    port: 22
+    expose:
+      default: true
+    protocol: TCP
   traefik:
     port: 9000
     expose:
@@ -43,6 +48,7 @@ additionalArguments:
   - "--accesslog=true"
   - "--entrypoints.web.address=:80"
   - "--entrypoints.websecure.address=:443"
+  - "--entrypoints.ssh.address=:22"
   - "--api.dashboard=false"
   - "--ping=true"
 
