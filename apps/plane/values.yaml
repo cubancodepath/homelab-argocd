@@ -44,6 +44,9 @@ env:
   # Web URL for OIDC redirects and app URLs (must match ingress host)
   web_url: "https://plane.cubancodelab.net"
 
+  # Timezone
+  time_zone: "Asia/Dubai"
+
   # Force HTTPS
   secure_browser_xss_filter: "1"
   content_security_policy_enabled: "1"
