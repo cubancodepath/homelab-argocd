@@ -1,7 +1,8 @@
 preUpgradeChecker:
   jobEnabled: false
 
-defaultClassReplicaCount: 2
+# Reduce replicas to 1 to free up storage space on small clusters
+defaultClassReplicaCount: 1
 
 ingress:
   enabled: true
