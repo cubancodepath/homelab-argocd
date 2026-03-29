@@ -1,24 +1,160 @@
+---
+# PersistentVolumes para Runner 0
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gitea-runner-0-data
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: "10.5.1.5"
+    path: "/volume1/k3s-ssd/gitea-runners/runner-0-data"
+  mountOptions:
+    - nfsvers=4.1
+    - hard
+    - intr
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gitea-runner-0-cache
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: "10.5.1.5"
+    path: "/volume1/k3s-ssd/gitea-runners/runner-0-cache"
+  mountOptions:
+    - nfsvers=4.1
+    - hard
+    - intr
+---
+# PersistentVolumes para Runner 1
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gitea-runner-1-data
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: "10.5.1.5"
+    path: "/volume1/k3s-ssd/gitea-runners/runner-1-data"
+  mountOptions:
+    - nfsvers=4.1
+    - hard
+    - intr
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: gitea-runner-1-cache
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: "10.5.1.5"
+    path: "/volume1/k3s-ssd/gitea-runners/runner-1-cache"
+  mountOptions:
+    - nfsvers=4.1
+    - hard
+    - intr
+---
+# PersistentVolumeClaims para Runner 0
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitea-runner-0-data
+  namespace: gitea
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 10Gi
+  volumeName: gitea-runner-0-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitea-runner-0-cache
+  namespace: gitea
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 10Gi
+  volumeName: gitea-runner-0-cache
+---
+# PersistentVolumeClaims para Runner 1
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitea-runner-1-data
+  namespace: gitea
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 10Gi
+  volumeName: gitea-runner-1-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitea-runner-1-cache
+  namespace: gitea
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 10Gi
+  volumeName: gitea-runner-1-cache
+---
+# ServiceAccount
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: gitea-runner
   namespace: gitea
 ---
+# Deployment para Runner 0
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
-  name: gitea-runner
+  name: gitea-runner-0
   namespace: gitea
 spec:
-  serviceName: gitea-runner
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: gitea-runner
+      runner-id: "0"
   template:
     metadata:
       labels:
         app.kubernetes.io/name: gitea-runner
+        runner-id: "0"
     spec:
       serviceAccountName: gitea-runner
       containers:
@@ -35,9 +171,7 @@ spec:
                   name: gitea-runner-secret
                   key: GITEA_RUNNER_REGISTRATION_TOKEN
             - name: GITEA_RUNNER_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
+              value: "homelab-runner-0"
             - name: DOCKER_HOST
               value: "tcp://localhost:2376"
             - name: DOCKER_TLS_VERIFY
@@ -81,36 +215,97 @@ spec:
               memory: 2Gi
 
       volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: gitea-runner-0-data
+        - name: cache
+          persistentVolumeClaim:
+            claimName: gitea-runner-0-cache
         - name: docker-certs
           emptyDir: {}
-
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        storageClassName: "longhorn"
-        resources:
-          requests:
-            storage: 10Gi
-    - metadata:
-        name: cache
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        storageClassName: "longhorn"
-        resources:
-          requests:
-            storage: 10Gi
 ---
-apiVersion: v1
-kind: Service
+# Deployment para Runner 1
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: gitea-runner
+  name: gitea-runner-1
   namespace: gitea
 spec:
-  clusterIP: None
+  replicas: 1
   selector:
-    app.kubernetes.io/name: gitea-runner
-  ports:
-    - name: metrics
-      port: 8080
+    matchLabels:
+      app.kubernetes.io/name: gitea-runner
+      runner-id: "1"
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gitea-runner
+        runner-id: "1"
+    spec:
+      serviceAccountName: gitea-runner
+      containers:
+        # Runner principal
+        - name: runner
+          image: gitea/act_runner:0.2.11
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: GITEA_INSTANCE_URL
+              value: "https://git.cubancodelab.net"
+            - name: GITEA_RUNNER_REGISTRATION_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: gitea-runner-secret
+                  key: GITEA_RUNNER_REGISTRATION_TOKEN
+            - name: GITEA_RUNNER_NAME
+              value: "homelab-runner-1"
+            - name: DOCKER_HOST
+              value: "tcp://localhost:2376"
+            - name: DOCKER_TLS_VERIFY
+              value: "1"
+            - name: DOCKER_CERT_PATH
+              value: "/certs/client"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: cache
+              mountPath: /cache
+            - name: docker-certs
+              mountPath: /certs
+              readOnly: true
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: 2000m
+              memory: 2Gi
+
+        # Docker-in-Docker sidecar
+        - name: dind
+          image: docker:dind
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: true
+          env:
+            - name: DOCKER_TLS_CERTDIR
+              value: "/certs"
+          volumeMounts:
+            - name: docker-certs
+              mountPath: /certs
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: 2000m
+              memory: 2Gi
+
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: gitea-runner-1-data
+        - name: cache
+          persistentVolumeClaim:
+            claimName: gitea-runner-1-cache
+        - name: docker-certs
+          emptyDir: {}
