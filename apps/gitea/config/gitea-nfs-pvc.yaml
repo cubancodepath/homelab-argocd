@@ -11,7 +11,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: "10.5.1.5"
-    path: "/volume1/k3s-ssd/gitea"
+    path: "/volume1/k3s-ssd"
   mountOptions:
     - nfsvers=4.1
     - hard
