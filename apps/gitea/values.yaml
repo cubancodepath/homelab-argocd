@@ -38,15 +38,6 @@ gitea:
     username: gitea-admin
     email: admin@git.cubancodelab.net
 
-  oauth:
-    - name: "Authentik"
-      provider: openidConnect
-      key: "kJFRoWnh1ZbrD2JQoxPLVXTCuX635yqITMR9LBrG"
-      autoDiscoverUrl: "https://auth.cubancodelab.net/application/o/gitea/.well-known/openid-configuration"
-      scopes: "openid email profile"
-      existingSecret: gitea-authentik-secret
-      clientSecretKey: "client-secret"
-
   config:
     server:
       DOMAIN: git.cubancodelab.net
@@ -71,14 +62,29 @@ gitea:
       ADAPTER: memory
     queue:
       TYPE: channel
+    oauth2:
+      ENABLED: "true"
+    "oauth2.Authentik":
+      ENABLED: "true"
+      PROVIDER: openidConnect
+      CLIENT_ID: "kJFRoWnh1ZbrD2JQoxPLVXTCuX635yqITMR9LBrG"
+      OPENID_AUTO_DISCOVERY_URL: "https://auth.cubancodelab.net/application/o/gitea/.well-known/openid-configuration"
+      SCOPES: "openid email profile"
+      SKIP_LOCAL_TWO_FA: "false"
+      AUTO_REGISTER_USER: "true"
 
-  # Inject DB password from sealed secret via env var
+  # Inject DB password and OAuth client secret from sealed secrets via env vars
   additionalConfigFromEnvs:
     - name: GITEA__DATABASE__PASSWD
       valueFrom:
         secretKeyRef:
           name: gitea-config
           key: db-password
+    - name: GITEA__OAUTH2__AUTHENTIK__CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: gitea-authentik-secret
+          key: client-secret
 
 # Persistence (for git repos and attachments)
 # Using NFS SSD from NAS instead of Longhorn to save space
