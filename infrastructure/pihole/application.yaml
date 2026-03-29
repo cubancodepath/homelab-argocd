@@ -14,10 +14,10 @@ spec:
       helm:
         valueFiles:
           - $values/infrastructure/pihole/values.yaml
-    - repoURL: git@github.com:barbar0jav1er/homelab-argocd.git
+    - repoURL: git@github.com:cubancodepath/homelab-argocd.git
       targetRevision: HEAD
       ref: values
-    - repoURL: git@github.com:barbar0jav1er/homelab-argocd.git
+    - repoURL: git@github.com:cubancodepath/homelab-argocd.git
       targetRevision: HEAD
       path: infrastructure/pihole/config
   destination:

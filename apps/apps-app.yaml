@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: git@github.com:barbar0jav1er/homelab-argocd.git
+    repoURL: git@github.com:cubancodepath/homelab-argocd.git
     targetRevision: HEAD
     path: apps
     directory:
