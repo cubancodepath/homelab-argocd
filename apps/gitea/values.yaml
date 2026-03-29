@@ -38,6 +38,15 @@ gitea:
     username: gitea-admin
     email: admin@git.cubancodelab.net
 
+  oauth:
+    - name: "Authentik"
+      provider: openidConnect
+      key: "kJFRoWnh1ZbrD2JQoxPLVXTCuX635yqITMR9LBrG"
+      autoDiscoverUrl: "https://auth.cubancodelab.net/application/o/gitea/.well-known/openid-configuration"
+      scopes: "openid email profile"
+      existingSecret: gitea-authentik-secret
+      clientSecretKey: "client-secret"
+
   config:
     server:
       DOMAIN: git.cubancodelab.net
