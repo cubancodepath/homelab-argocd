@@ -72,10 +72,10 @@ gitea:
           key: db-password
 
 # Persistence (for git repos and attachments)
+# Using NFS SSD from NAS instead of Longhorn to save space
 persistence:
   enabled: true
-  storageClassName: longhorn
-  size: 10Gi
+  existingClaim: gitea-shared-storage
 
 # Resource limits
 resources:
