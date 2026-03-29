@@ -1,0 +1,102 @@
+# Plane CE Helm Chart Configuration
+# Reference: https://github.com/makeplane/helm-charts
+
+# Disable local deployments to use existing cluster infrastructure
+postgres:
+  local_setup: false
+  # Do NOT uncomment the following - use external_secrets instead
+  # storageClass: "nfs-ssd-fast"
+
+minio:
+  local_setup: false
+  env:
+    minio_endpoint_ssl: false
+
+redis:
+  local_setup: true
+  image: "valkey/valkey:7.2.11-alpine"
+  storageClass: "fast-ssd-critical"
+  volumeSize: "100Mi"
+
+rabbitmq:
+  local_setup: true
+  rabbitmq:
+    auth:
+      username: "guest"
+      password: "guest"
+
+# Environment configuration
+env:
+  # External PostgreSQL connection (provided via secret)
+  pgdb_remote_url: ""
+
+  # External MinIO/S3 configuration
+  aws_s3_endpoint_url: "http://minio.storage.svc.cluster.local:9000"
+  aws_region: "us-east-1"
+  docstore_bucket: "plane-uploads"
+  doc_upload_size_limit: "5242880"
+
+  # Enable features
+  enable_signup: "1"
+  enable_email_password: "1"
+
+  # Web URL for OIDC redirects and app URLs
+  web_url: "https://plane.cubancodelab.net"
+
+# Reference existing secrets for sensitive values
+external_secrets:
+  app_env_existingSecret: "plane-app-secret"
+  doc_store_existingSecret: "plane-storage-secret"
+
+# Ingress configuration - Traefik + cert-manager
+ingress:
+  enabled: true
+  appHost: "plane.cubancodelab.net"
+  ingressClass: "traefik"
+  ingress_annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
+    traefik.ingress.kubernetes.io/router.tls: "true"
+
+ssl:
+  tls_secret_name: "plane-tls"
+
+# Resource limits
+api:
+  replicaCount: 2
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1Gi"
+
+live:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+worker:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+scheduler:
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"

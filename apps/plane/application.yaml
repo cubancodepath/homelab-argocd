@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: plane
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://helm.plane.so/
+      chart: plane-ce
+      targetRevision: 1.4.1
+      helm:
+        valueFiles:
+          - $values/apps/plane/values.yaml
+    - repoURL: https://github.com/cubancodepath/homelab-argocd.git
+      targetRevision: main
+      ref: values
+    - repoURL: https://github.com/cubancodepath/homelab-argocd.git
+      targetRevision: HEAD
+      path: apps/plane/config
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: plane
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
