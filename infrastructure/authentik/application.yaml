@@ -16,10 +16,10 @@ spec:
       helm:
         valueFiles:
           - $values/infrastructure/authentik/values.yaml
-    - repoURL: git@github.com:cubancodepath/homelab-argocd.git
+    - repoURL: https://github.com/cubancodepath/homelab-argocd.git
       targetRevision: HEAD
       ref: values
-    - repoURL: git@github.com:cubancodepath/homelab-argocd.git
+    - repoURL: https://github.com/cubancodepath/homelab-argocd.git
       targetRevision: HEAD
       path: infrastructure/authentik/config
   destination:

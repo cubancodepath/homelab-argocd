@@ -8,13 +8,13 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: git@github.com:cubancodepath/homelab-argocd.git
+    - repoURL: https://github.com/cubancodepath/homelab-argocd.git
       targetRevision: HEAD
       path: charts/homelab-app
       helm:
         valueFiles:
           - $values/apps/nginx/values.yaml
-    - repoURL: git@github.com:cubancodepath/homelab-argocd.git
+    - repoURL: https://github.com/cubancodepath/homelab-argocd.git
       targetRevision: HEAD
       ref: values
   destination:

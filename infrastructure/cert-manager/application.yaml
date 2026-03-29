@@ -16,10 +16,10 @@ spec:
       helm:
         valueFiles:
           - $values/infrastructure/cert-manager/values.yaml
-    - repoURL: git@github.com:cubancodepath/homelab-argocd.git
+    - repoURL: https://github.com/cubancodepath/homelab-argocd.git
       targetRevision: HEAD
       ref: values
-    - repoURL: git@github.com:cubancodepath/homelab-argocd.git
+    - repoURL: https://github.com/cubancodepath/homelab-argocd.git
       targetRevision: main
       path: infrastructure/cert-manager/config
   destination:

@@ -10,13 +10,13 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: git@github.com:cubancodepath/homelab-argocd.git
+    - repoURL: https://github.com/cubancodepath/homelab-argocd.git
       targetRevision: HEAD
       path: charts/media
       helm:
         valueFiles:
           - values.yaml
-    - repoURL: git@github.com:cubancodepath/homelab-argocd.git
+    - repoURL: https://github.com/cubancodepath/homelab-argocd.git
       targetRevision: HEAD
       path: apps/media
       directory:

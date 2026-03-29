@@ -15,7 +15,7 @@ spec:
         releaseName: kube-prometheus-stack
         valueFiles:
           - $values/infrastructure/kube-prometheus-stack/values.yaml
-    - repoURL: git@github.com:cubancodepath/homelab-argocd.git
+    - repoURL: https://github.com/cubancodepath/homelab-argocd.git
       targetRevision: HEAD
       ref: values
   destination:
