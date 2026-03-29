@@ -15,7 +15,7 @@ minio:
 redis:
   local_setup: true
   image: "valkey/valkey:7.2.11-alpine"
-  storageClass: "fast-ssd-critical"
+  storageClass: "longhorn"
   volumeSize: "100Mi"
 
 rabbitmq:
