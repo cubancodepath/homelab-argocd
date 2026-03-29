@@ -71,8 +71,6 @@ auth:
 web:
   forceHttps: false
 
-logLevel: debug
-
 ingress:
   enabled: true
   className: "traefik"
