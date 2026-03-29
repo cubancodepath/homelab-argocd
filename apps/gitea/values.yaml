@@ -38,22 +38,12 @@ gitea:
     username: gitea-admin
     email: admin@git.cubancodelab.net
 
-  # Init script to configure OAuth provider directly in app.ini
-  initScript: |
-    if ! grep -q "\\[oauth2\\.Authentik\\]" /data/gitea/conf/app.ini; then
-      cat >> /data/gitea/conf/app.ini <<'EOF'
-
-    [oauth2.Authentik]
-    ENABLED = true
-    PROVIDER = openidConnect
-    CLIENT_ID = kJFRoWnh1ZbrD2JQoxPLVXTCuX635yqITMR9LBrG
-    CLIENT_SECRET = ${GITEA_OAUTH_SECRET}
-    OPENID_AUTO_DISCOVERY_URL = https://auth.cubancodelab.net/application/o/gitea/.well-known/openid-configuration
-    SCOPES = openid email profile
-    AUTO_REGISTER_USER = true
-    SKIP_LOCAL_TWO_FA = false
-    EOF
-    fi
+  # OAuth2 provider configuration via Authentik OIDC
+  oauth:
+    - name: "Authentik"
+      provider: "openidConnect"
+      existingSecret: gitea-authentik-secret
+      autoDiscoverUrl: "https://auth.cubancodelab.net/application/o/gitea/.well-known/openid-configuration"
 
   config:
     server:
@@ -87,11 +77,6 @@ gitea:
         secretKeyRef:
           name: gitea-config
           key: db-password
-    - name: GITEA_OAUTH_SECRET
-      valueFrom:
-        secretKeyRef:
-          name: gitea-authentik-secret
-          key: client-secret
 
 # Persistence (for git repos and attachments)
 # Using NFS SSD from NAS instead of Longhorn to save space
