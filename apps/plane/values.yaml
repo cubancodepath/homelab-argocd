@@ -20,10 +20,8 @@ redis:
 
 rabbitmq:
   local_setup: true
-  rabbitmq:
-    auth:
-      username: "guest"
-      password: "guest"
+  default_user: "plane"
+  default_password: "plane"
 
 # Environment configuration
 env:
@@ -46,9 +44,6 @@ env:
   # Force HTTPS
   secure_browser_xss_filter: "1"
   content_security_policy_enabled: "1"
-
-  # AMQP/RabbitMQ configuration
-  amqp_url: "amqp://guest:guest@plane-rabbitmq:5672/"
 
 # Reference existing secrets for sensitive values
 external_secrets:
