@@ -39,7 +39,7 @@ gitea:
     email: admin@git.cubancodelab.net
 
   # Init script to configure OAuth provider directly in app.ini
-  initPreScript: |
+  initScript: |
     if ! grep -q "\\[oauth2\\.Authentik\\]" /data/gitea/conf/app.ini; then
       cat >> /data/gitea/conf/app.ini <<'EOF'
 
