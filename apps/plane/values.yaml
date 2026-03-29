@@ -11,6 +11,8 @@ minio:
   local_setup: true
   storageClass: ""
   volumeSize: "20Gi"
+  root_user: "minio"
+  root_password: "laDe3RZRUHTGo6CsCoFnnXf4MqMlQF/MrLrz1wDDVXk="
   env:
     minio_endpoint_ssl: false
 
@@ -30,8 +32,7 @@ env:
   # External PostgreSQL connection (provided via secret)
   pgdb_remote_url: ""
 
-  # MinIO configuration - points to local MinIO instance (StatefulSet FQDN)
-  aws_s3_endpoint_url: "http://plane-minio-wl-0.plane-minio.plane.svc.cluster.local:9000"
+  # AWS/S3 configuration (generated automatically when minio.local_setup: true)
   aws_region: "us-east-1"
   docstore_bucket: "plane-uploads"
   doc_upload_size_limit: "5242880"
@@ -50,7 +51,7 @@ env:
 # Reference existing secrets for sensitive values
 external_secrets:
   app_env_existingSecret: "plane-app-secret"
-  doc_store_existingSecret: "plane-storage-secret"
+  # doc_store_existingSecret removed - chart generates it automatically for local MinIO
 
 # Ingress configuration - Traefik + cert-manager
 ingress:
