@@ -54,10 +54,10 @@ auth:
   oidc:
     enabled: true
     clientId: "rpM4pWEYyf8pVMqiVDOuEAJoatEQCt5tix73OKEp"
-    authUri: "https://authentik-server.authentik.svc.cluster.local/application/o/authorize/"
-    tokenUri: "https://authentik-server.authentik.svc.cluster.local/application/o/token/"
-    userInfoUri: "https://authentik-server.authentik.svc.cluster.local/application/o/userinfo/"
-    logoutUri: "https://authentik-server.authentik.svc.cluster.local/application/o/outline/end-session/"
+    authUri: "https://auth.cubancodelab.net/application/o/authorize/"
+    tokenUri: "https://auth.cubancodelab.net/application/o/token/"
+    userInfoUri: "https://auth.cubancodelab.net/application/o/userinfo/"
+    logoutUri: "https://auth.cubancodelab.net/application/o/outline/end-session/"
     usernameClaim: "preferred_username"
     displayName: "Authentik"
     scopes:
