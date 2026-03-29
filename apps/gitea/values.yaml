@@ -38,6 +38,23 @@ gitea:
     username: gitea-admin
     email: admin@git.cubancodelab.net
 
+  # Init script to configure OAuth provider directly in app.ini
+  initPreScript: |
+    if ! grep -q "\\[oauth2\\.Authentik\\]" /data/gitea/conf/app.ini; then
+      cat >> /data/gitea/conf/app.ini <<'EOF'
+
+    [oauth2.Authentik]
+    ENABLED = true
+    PROVIDER = openidConnect
+    CLIENT_ID = kJFRoWnh1ZbrD2JQoxPLVXTCuX635yqITMR9LBrG
+    CLIENT_SECRET = ${GITEA_OAUTH_SECRET}
+    OPENID_AUTO_DISCOVERY_URL = https://auth.cubancodelab.net/application/o/gitea/.well-known/openid-configuration
+    SCOPES = openid email profile
+    AUTO_REGISTER_USER = true
+    SKIP_LOCAL_TWO_FA = false
+    EOF
+    fi
+
   config:
     server:
       DOMAIN: git.cubancodelab.net
@@ -63,31 +80,18 @@ gitea:
     queue:
       TYPE: channel
 
-  # Inject DB password and OAuth provider config from sealed secrets via env vars
+  # Inject DB password from sealed secret via env var
   additionalConfigFromEnvs:
     - name: GITEA__DATABASE__PASSWD
       valueFrom:
         secretKeyRef:
           name: gitea-config
           key: db-password
-    # OAuth provider configuration via environment variables
-    - name: GITEA_OAUTH_NAME_0
-      value: "Authentik"
-    - name: GITEA_OAUTH_PROVIDER_0
-      value: "openidConnect"
-    - name: GITEA_OAUTH_CLIENT_ID_0
-      value: "kJFRoWnh1ZbrD2JQoxPLVXTCuX635yqITMR9LBrG"
-    - name: GITEA_OAUTH_CLIENT_SECRET_0
+    - name: GITEA_OAUTH_SECRET
       valueFrom:
         secretKeyRef:
           name: gitea-authentik-secret
           key: client-secret
-    - name: GITEA_OAUTH_OPENID_AUTO_DISCOVERY_URL_0
-      value: "https://auth.cubancodelab.net/application/o/gitea/.well-known/openid-configuration"
-    - name: GITEA_OAUTH_SCOPES_0
-      value: "openid email profile"
-    - name: GITEA_OAUTH_AUTO_REGISTER_USER_0
-      value: "true"
 
 # Persistence (for git repos and attachments)
 # Using NFS SSD from NAS instead of Longhorn to save space
