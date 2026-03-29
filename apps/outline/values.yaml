@@ -53,7 +53,7 @@ fileStorage:
 auth:
   oidc:
     enabled: true
-    clientId: "REEMPLAZA_CON_AUTHENTIK_CLIENT_ID"
+    clientId: "rpM4pWEYyf8pVMqiVDOuEAJoatEQCt5tix73OKEp"
     authUri: "https://auth.cubancodelab.net/application/o/outline/authorize/"
     tokenUri: "https://auth.cubancodelab.net/application/o/token/"
     userInfoUri: "https://auth.cubancodelab.net/application/o/userinfo/"
