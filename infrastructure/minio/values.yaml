@@ -1,3 +1,5 @@
+mode: standalone
+
 existingSecret: minio-secret
 
 persistence:
