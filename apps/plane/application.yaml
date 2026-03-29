@@ -30,7 +30,7 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - SkipDryRunOnMissingResource=true
-  # Ignore completed jobs to avoid immutability errors
+  # Ignore all Job statuses (migrations, buckets, etc. are one-time)
   ignoreDifferences:
     - group: batch
       kind: Job
