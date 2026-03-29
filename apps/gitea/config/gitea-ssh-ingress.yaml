@@ -9,5 +9,5 @@ spec:
   routes:
     - match: HostSNI(`*`)
       services:
-        - name: gitea-ssh
+        - name: gitea-ssh-lb
           port: 2222
