@@ -1,7 +1,7 @@
 url: "https://outline.cubancodelab.net"
 
 image:
-  tag: v1.6.1
+  tag: 1.6.1
 
 # Redis bundled (lightweight, stateless)
 redis:
