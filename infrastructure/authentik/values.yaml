@@ -44,10 +44,10 @@ worker:
   resources:
     requests:
       cpu: 100m
-      memory: 1Gi
+      memory: 2Gi
     limits:
       cpu: 300m
-      memory: 4Gi
+      memory: 8Gi
 
 # PostgreSQL configuration - use external PostgreSQL
 postgresql:
