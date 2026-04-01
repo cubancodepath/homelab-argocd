@@ -1,23 +1,4 @@
 apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: harbor-ssd-pv
-spec:
-  capacity:
-    storage: 100Gi
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: ""
-  persistentVolumeReclaimPolicy: Retain
-  nfs:
-    server: "10.5.1.5"
-    path: "/volume1/k3s-ssd/harbor"
-  mountOptions:
-    - nfsvers=4.1
-    - hard
-    - intr
----
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: harbor-registry-storage
@@ -25,30 +6,10 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: ""
+  storageClassName: nfs-hdd
   resources:
     requests:
       storage: 100Gi
-  volumeName: harbor-ssd-pv
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: harbor-jobservice-pv
-spec:
-  capacity:
-    storage: 5Gi
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: ""
-  persistentVolumeReclaimPolicy: Retain
-  nfs:
-    server: "10.5.1.5"
-    path: "/volume1/k3s-ssd/harbor/jobservice"
-  mountOptions:
-    - nfsvers=4.1
-    - hard
-    - intr
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -58,30 +19,10 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: ""
+  storageClassName: nfs-hdd
   resources:
     requests:
       storage: 5Gi
-  volumeName: harbor-jobservice-pv
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: harbor-redis-pv
-spec:
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: ""
-  persistentVolumeReclaimPolicy: Retain
-  nfs:
-    server: "10.5.1.5"
-    path: "/volume1/k3s-ssd/harbor/redis"
-  mountOptions:
-    - nfsvers=4.1
-    - hard
-    - intr
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -91,30 +32,10 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: ""
+  storageClassName: nfs-hdd
   resources:
     requests:
       storage: 1Gi
-  volumeName: harbor-redis-pv
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: harbor-trivy-pv
-spec:
-  capacity:
-    storage: 5Gi
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: ""
-  persistentVolumeReclaimPolicy: Retain
-  nfs:
-    server: "10.5.1.5"
-    path: "/volume1/k3s-ssd/harbor/trivy"
-  mountOptions:
-    - nfsvers=4.1
-    - hard
-    - intr
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -124,8 +45,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: ""
+  storageClassName: nfs-hdd
   resources:
     requests:
       storage: 5Gi
-  volumeName: harbor-trivy-pv

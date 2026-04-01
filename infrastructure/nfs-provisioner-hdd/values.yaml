@@ -1,0 +1,13 @@
+nfs:
+  server: "10.5.1.5"
+  path: "/volume2/k3s-hdd"
+
+storageClass:
+  name: nfs-hdd
+  defaultClass: false
+  reclaimPolicy: Retain
+  archiveOnDelete: true
+  mountOptions:
+    - nfsvers=4.1
+    - hard
+    - intr

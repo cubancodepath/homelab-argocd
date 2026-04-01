@@ -1,0 +1,13 @@
+nfs:
+  server: "10.5.1.5"
+  path: "/volume1/k3s-ssd"
+
+storageClass:
+  name: nfs-ssd
+  defaultClass: false
+  reclaimPolicy: Retain
+  archiveOnDelete: true
+  mountOptions:
+    - nfsvers=4.1
+    - hard
+    - intr

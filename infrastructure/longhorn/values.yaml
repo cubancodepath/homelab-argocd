@@ -1,8 +1,8 @@
 preUpgradeChecker:
   jobEnabled: false
 
-# Reduce replicas to 1 to free up storage space on small clusters
-defaultClassReplicaCount: 1
+# Use 2 replicas for two-node HA
+defaultClassReplicaCount: 2
 
 ingress:
   enabled: true
