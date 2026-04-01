@@ -36,6 +36,7 @@ root-app.yaml
 ### Core Services
 - **ArgoCD** - GitOps continuous deployment
 - **SealedSecrets** - Encrypted secrets management
+- **External Secrets (Bitwarden)** - BWS test integration via ESO
 - **Cert-Manager** - Automatic SSL certificates via Cloudflare
 - **Traefik** - Ingress controller and load balancer
 - **MetalLB** - Load balancer for bare metal
@@ -127,6 +128,9 @@ kubectl create secret generic cloudflare-api-token \
   -o yaml > infrastructure/cert-manager/config/cloudflare-api-token-sealedsecret.yaml
 ```
 
+If you are testing Bitwarden Secrets Manager, follow
+[Bitwarden Secrets Test Guide](docs/bitwarden-secrets.md) before moving on.
+
 ### 4. Deploy Root App
 ```bash
 kubectl apply -f root-app.yaml
@@ -179,12 +183,14 @@ kubectl get pods -o wide | grep jellyfin
 ## 📖 Documentation
 
 - [SealedSecrets Usage Guide](docs/sealed-secrets.md) - Complete guide for managing encrypted secrets
+- [Bitwarden Secrets Test Guide](docs/bitwarden-secrets.md) - ESO + Bitwarden test flow
 - [Observability Components Guide](docs/observability-components-guide.md) - Future monitoring components
 - [Bootstrap Scripts](bootstrap/README.md) - Cluster maintenance scripts
 
 ## 🔐 Security Features
 
 - **Encrypted Secrets** - All secrets encrypted with SealedSecrets
+- **External Secrets** - Optional Bitwarden Secrets Manager test flow
 - **OIDC Authentication** - Single sign-on via Authentik
 - **Automatic SSL** - Let's Encrypt certificates via cert-manager
 - **Network Security** - Traefik ingress with proper TLS termination

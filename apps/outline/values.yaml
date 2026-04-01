@@ -21,10 +21,10 @@ minio:
 
 # App secrets
 secretKeyExternalSecret:
-  name: "outline-app-secret"
+  name: "outline-app-secret-bws"
   key: "secret-key"
 utilsSecretExternalSecret:
-  name: "outline-app-secret"
+  name: "outline-app-secret-bws"
   key: "utils-secret"
 
 # PostgreSQL global
@@ -33,7 +33,7 @@ externalPostgresql:
   port: 5432
   username: "outline"
   database: "outline"
-  existingSecret: "outline-db-secret"
+  existingSecret: "outline-db-secret-bws"
   passwordSecretKey: "postgres-password"
 
 database:
@@ -43,7 +43,7 @@ database:
 fileStorage:
   mode: s3
   s3:
-    existingSecret: "outline-minio-secret"
+    existingSecret: "outline-minio-secret-bws"
     accessKeyIdSecretKey: "access-key-id"
     secretAccessKeySecretKey: "secret-access-key"
     bucket: "outline"
@@ -68,7 +68,7 @@ auth:
       - profile
       - email
     existingSecret:
-      name: "outline-oidc-secret"
+      name: "outline-oidc-secret-bws"
       clientSecretKey: "client-secret"
 
 web:

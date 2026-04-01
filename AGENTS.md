@@ -36,6 +36,11 @@ argocd app sync <app-name> --dry-run
 kubectl get applications -n argocd -o wide
 ```
 
+### Storage notes
+- Default StorageClass: longhorn-2replicas (2-node HA).
+- NFS dynamic provisioners: nfs-ssd and nfs-hdd.
+- shared-media-pvc stays as a static NFS claim on /volume2/media.
+
 ### SealedSecrets validation
 ```bash
 # Validate a SealedSecret (custom controller name/namespace)
