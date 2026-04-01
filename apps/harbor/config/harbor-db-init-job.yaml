@@ -30,17 +30,14 @@ spec:
             - -c
           args:
             - |
-              psql -v ON_ERROR_STOP=1 <<'SQL'
-              DO $$
-              BEGIN
-                IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'registry') THEN
-                  CREATE DATABASE registry;
-                END IF;
-                IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'notary_server') THEN
-                  CREATE DATABASE notary_server;
-                END IF;
-                IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'notary_signer') THEN
-                  CREATE DATABASE notary_signer;
-                END IF;
-              END$$;
-              SQL
+              set -euo pipefail
+              create_db() {
+                local db_name
+                db_name="$1"
+                if [ "$(psql -tAc "SELECT 1 FROM pg_database WHERE datname='${db_name}'")" != "1" ]; then
+                  psql -v ON_ERROR_STOP=1 -c "CREATE DATABASE ${db_name}";
+                fi
+              }
+              create_db registry
+              create_db notary_server
+              create_db notary_signer
