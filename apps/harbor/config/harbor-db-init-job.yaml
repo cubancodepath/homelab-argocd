@@ -1,0 +1,46 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: harbor-db-init
+  namespace: harbor
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: psql
+          image: public.ecr.aws/bitnami/postgresql:16.2.0-debian-12-r15
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: harbor-postgresql-secret
+                  key: password
+            - name: PGHOST
+              value: postgresql.database.svc.cluster.local
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              value: postgres
+            - name: PGDATABASE
+              value: postgres
+          command:
+            - sh
+            - -c
+          args:
+            - |
+              psql -v ON_ERROR_STOP=1 <<'SQL'
+              DO $$
+              BEGIN
+                IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'registry') THEN
+                  CREATE DATABASE registry;
+                END IF;
+                IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'notary_server') THEN
+                  CREATE DATABASE notary_server;
+                END IF;
+                IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'notary_signer') THEN
+                  CREATE DATABASE notary_signer;
+                END IF;
+              END$$;
+              SQL

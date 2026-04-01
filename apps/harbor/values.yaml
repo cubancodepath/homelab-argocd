@@ -1,0 +1,68 @@
+externalURL: https://harbor.cubancodelab.net
+
+expose:
+  type: ingress
+  tls:
+    enabled: true
+    certSource: secret
+    secret:
+      secretName: harbor-tls
+  ingress:
+    className: traefik
+    hosts:
+      core: harbor.cubancodelab.net
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+      traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
+      traefik.ingress.kubernetes.io/router.tls: "true"
+      ingress.kubernetes.io/ssl-redirect: "true"
+      ingress.kubernetes.io/proxy-body-size: "0"
+
+persistence:
+  enabled: true
+  resourcePolicy: "keep"
+  persistentVolumeClaim:
+    registry:
+      existingClaim: harbor-registry-storage
+      accessMode: ReadWriteOnce
+      size: 100Gi
+    jobservice:
+      jobLog:
+        storageClass: longhorn-2replicas
+        accessMode: ReadWriteOnce
+        size: 5Gi
+    trivy:
+      storageClass: longhorn-2replicas
+      accessMode: ReadWriteOnce
+      size: 5Gi
+
+existingSecretAdminPassword: harbor-admin-secret
+
+core:
+  extraEnvVars:
+    - name: CONFIG_OVERWRITE_JSON
+      valueFrom:
+        secretKeyRef:
+          name: harbor-oidc-config
+          key: CONFIG_OVERWRITE_JSON
+
+database:
+  type: external
+  external:
+    host: postgresql.database.svc.cluster.local
+    port: "5432"
+    username: postgres
+    existingSecret: harbor-postgresql-secret
+    coreDatabase: registry
+    notaryServerDatabase: notary_server
+    notarySignerDatabase: notary_signer
+    sslmode: "disable"
+
+redis:
+  type: internal
+
+chartmuseum:
+  enabled: false
+
+notary:
+  enabled: false
