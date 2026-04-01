@@ -1,0 +1,12 @@
+app:
+  name: "bitwarden-test"
+  image:
+    repository: nginx
+    tag: "1.25-alpine"
+    pullPolicy: IfNotPresent
+  envFrom:
+    - secretRef:
+        name: bitwarden-test-secret
+
+ingress:
+  enabled: false

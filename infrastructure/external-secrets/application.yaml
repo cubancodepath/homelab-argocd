@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: external-secrets
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://charts.external-secrets.io
+      chart: external-secrets
+      targetRevision: 0.10.7
+      helm:
+        valueFiles:
+          - $values/infrastructure/external-secrets/values.yaml
+    - repoURL: https://github.com/cubancodepath/homelab-argocd.git
+      targetRevision: HEAD
+      ref: values
+    - repoURL: https://github.com/cubancodepath/homelab-argocd.git
+      targetRevision: HEAD
+      path: infrastructure/external-secrets/config
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: external-secrets
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

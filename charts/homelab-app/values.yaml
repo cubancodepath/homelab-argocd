@@ -9,6 +9,8 @@ app:
     repository: nginx
     tag: "1.25-alpine"
     pullPolicy: IfNotPresent
+  env: []
+  envFrom: []
   
   service:
     type: ClusterIP
