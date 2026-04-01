@@ -16,7 +16,11 @@ root-app.yaml
 │   ├── cert-manager/
 │   ├── traefik/
 │   ├── metallb/
+│   ├── longhorn/
 │   ├── authentik/
+│   ├── minio/
+│   ├── postgresql/
+│   ├── redis/
 │   ├── kube-prometheus-stack/
 │   ├── pihole/
 │   ├── node-setup/
@@ -37,6 +41,11 @@ root-app.yaml
 - **MetalLB** - Load balancer for bare metal
 - **Authentik** - Identity provider and SSO
 
+### Data Services
+- **PostgreSQL** - Shared relational database
+- **Redis** - Shared cache and message broker
+- **MinIO** - S3-compatible object storage
+
 ### Hardware Acceleration
 - **Intel GPU Plugin** - Hardware transcoding for media workloads
 - **Node Feature Discovery** - Automatic hardware detection and labeling
@@ -46,14 +55,16 @@ root-app.yaml
 - **Pi-hole** - DNS filtering and ad blocking
 
 ### Storage Strategy
-Four StorageClasses for different performance needs:
+Tiered storage with Longhorn for HA and NFS for bulk data:
 
-| StorageClass | Type | Capacity | Use Case |
-|--------------|------|----------|----------|
-| `fast-ssd-critical` | Local SSD | 280GB | Redis, Prometheus TSDB |
-| `nfs-ssd-fast` | NFS SSD | 4TB | PostgreSQL, app configs |
-| `nfs-hdd-bulk` (default) | NFS HDD | 8TB | Backups, logs, documents |
-| `nfs-media-direct` | NFS Direct | ∞ | Media server files |
+| StorageClass | Type | Use Case |
+|--------------|------|----------|
+| `longhorn-2replicas` (default) | Longhorn | Critical state (DBs, app configs) |
+| `nfs-ssd` | NFS SSD | Low-latency shared storage |
+| `nfs-hdd` | NFS HDD | Bulk data, caches, artifacts |
+| `local-path` | Node disk | Ephemeral/non-critical |
+
+Direct media storage is handled by a static NFS PVC (`shared-media-pvc`) on `/volume2/media`.
 
 ## 🚀 Applications
 
@@ -79,14 +90,10 @@ Complete media management suite with **hardware transcoding**:
 - Domain with Cloudflare DNS
 
 ### Required Provisioners
-```bash
-# Local Path Provisioner (usually included in K3s)
-kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
-
-# NFS CSI Driver
-helm repo add csi-driver-nfs https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
-helm install csi-driver-nfs csi-driver-nfs/csi-driver-nfs --namespace kube-system
-```
+Managed by ArgoCD apps in this repo:
+- `nfs-provisioner-ssd`
+- `nfs-provisioner-hdd`
+- `longhorn`
 
 ### NAS Configuration
 Configure NFS exports on your NAS:
