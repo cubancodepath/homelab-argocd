@@ -17,7 +17,7 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: AUTHENTIK_URL
-              value: "https://auth.cubancodelab.net"
+              value: "http://authentik-server.authentik.svc.cluster.local"
             - name: AUTHENTIK_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -53,7 +53,7 @@ spec:
               payload = {
                   "name": "outline-gitops",
                   "content": content,
-                  "managed": True,
+                  "enabled": True,
               }
 
               headers = {
@@ -61,10 +61,15 @@ spec:
                   "Content-Type": "application/json",
               }
 
-              list_url = f"{base_url}/api/v3/blueprints/instances/?page_size=200"
+              list_url = f"{base_url}/api/v3/managed/blueprints/?page_size=200"
               request = urllib.request.Request(list_url, headers=headers)
-              with urllib.request.urlopen(request) as response:
-                  data = json.loads(response.read().decode("utf-8"))
+              try:
+                  with urllib.request.urlopen(request) as response:
+                      data = json.loads(response.read().decode("utf-8"))
+              except urllib.error.HTTPError as exc:
+                  body = exc.read().decode("utf-8")
+                  print(body, file=sys.stderr)
+                  raise
 
               existing = None
               for item in data.get("results", []):
@@ -76,10 +81,10 @@ spec:
                   instance_id = existing.get("pk") or existing.get("id")
                   if not instance_id:
                       raise RuntimeError("Blueprint instance id not found")
-                  url = f"{base_url}/api/v3/blueprints/instances/{instance_id}/"
+                  url = f"{base_url}/api/v3/managed/blueprints/{instance_id}/"
                   method = "PATCH"
               else:
-                  url = f"{base_url}/api/v3/blueprints/instances/"
+                  url = f"{base_url}/api/v3/managed/blueprints/"
                   method = "POST"
 
               request = urllib.request.Request(
@@ -88,9 +93,14 @@ spec:
                   headers=headers,
                   method=method,
               )
-              with urllib.request.urlopen(request) as response:
-                  body = response.read().decode("utf-8")
-                  print(body)
+              try:
+                  with urllib.request.urlopen(request) as response:
+                      body = response.read().decode("utf-8")
+                      print(body)
+              except urllib.error.HTTPError as exc:
+                  body = exc.read().decode("utf-8")
+                  print(body, file=sys.stderr)
+                  raise
               PY
           volumeMounts:
             - name: blueprints
