@@ -28,11 +28,15 @@ persistence:
       size: 100Gi
     jobservice:
       jobLog:
-        storageClass: longhorn-2replicas
+        existingClaim: harbor-jobservice-logs
         accessMode: ReadWriteOnce
         size: 5Gi
+    redis:
+      existingClaim: harbor-redis-storage
+      accessMode: ReadWriteOnce
+      size: 1Gi
     trivy:
-      storageClass: longhorn-2replicas
+      existingClaim: harbor-trivy-cache
       accessMode: ReadWriteOnce
       size: 5Gi
 
