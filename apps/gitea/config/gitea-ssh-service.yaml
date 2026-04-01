@@ -1,0 +1,17 @@
+---
+# Regular ClusterIP service for Traefik TCP routing to SSH
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitea-ssh-lb
+  namespace: gitea
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/instance: gitea
+    app.kubernetes.io/name: gitea
+  ports:
+    - name: ssh
+      port: 2222
+      protocol: TCP
+      targetPort: 2222

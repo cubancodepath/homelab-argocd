@@ -1,0 +1,56 @@
+mode: standalone
+
+existingSecret: minio-secret
+
+persistence:
+  enabled: true
+  size: 20Gi
+  storageClass: longhorn-2replicas
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+
+service:
+  type: ClusterIP
+  port: 9000
+
+consoleService:
+  type: ClusterIP
+  port: 9001
+
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/router.tls: "true"
+  hosts:
+    - minio.cubancodelab.net
+  tls:
+    - secretName: minio-tls
+      hosts:
+        - minio.cubancodelab.net
+
+consoleIngress:
+  enabled: true
+  ingressClassName: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+    traefik.ingress.kubernetes.io/router.tls: "true"
+  hosts:
+    - minio-console.cubancodelab.net
+  tls:
+    - secretName: minio-console-tls
+      hosts:
+        - minio-console.cubancodelab.net
+
+metrics:
+  serviceMonitor:
+    enabled: false

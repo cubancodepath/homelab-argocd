@@ -2,14 +2,15 @@ global:
   deploymentAnnotations:
     secret.reloader.stakater.com/reload: "authentik"
 
-# Authentik configuration  
+# Authentik configuration
 authentik:
   enabled: false  # We'll use external secret with envFrom
 
 server:
   envFrom:
-  - secretRef:
-      name: authentik
+    - secretRef:
+        name: authentik
+
   ingress:
     enabled: true
     ingressClassName: traefik
@@ -27,7 +28,6 @@ server:
         hosts:
           - auth.cubancodelab.net
 
-  # Resources for authentik server
   resources:
     requests:
       cpu: 200m
@@ -38,32 +38,38 @@ server:
 
 worker:
   envFrom:
-  - secretRef:
-      name: authentik
+    - secretRef:
+        name: authentik
 
-# PostgreSQL configuration
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 300m
+      memory: 512Mi
+
+# PostgreSQL configuration - use external PostgreSQL
 postgresql:
-  enabled: true
-  auth:
-    username: authentik
-    database: authentik
-    existingSecret: authentik
-    secretKeys:
-      adminPasswordKey: postgresql-password
-      userPasswordKey: postgresql-password
-      replicationPasswordKey: postgresql-replication-password
-  primary:
-    persistence:
-      enabled: true
-      size: 8Gi
+  enabled: false
 
+# Redis configuration
 redis:
   enabled: true
   auth:
     enabled: true
     existingSecret: authentik
     existingSecretPasswordKey: redis-password
-  primary:
+  master:
     persistence:
       enabled: true
-      size: 8Gi
+      size: 5Gi
+      storageClassName: longhorn
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi

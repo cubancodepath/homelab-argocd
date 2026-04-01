@@ -1,0 +1,97 @@
+# Gitea Helm Chart Configuration
+# Reference: https://gitea.com/gitea/helm-chart
+
+replicaCount: 1
+
+# Ingress configuration - Traefik + cert-manager
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
+    traefik.ingress.kubernetes.io/router.tls: "true"
+  hosts:
+    - host: git.cubancodelab.net
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: gitea-tls
+      hosts:
+        - git.cubancodelab.net
+
+# Disable bundled PostgreSQL-HA and Valkey subcharts
+postgresql-ha:
+  enabled: false
+
+valkey-cluster:
+  enabled: false
+
+valkey:
+  enabled: false
+
+# Gitea configuration
+gitea:
+  admin:
+    existingSecret: gitea-config
+    username: gitea-admin
+    email: admin@git.cubancodelab.net
+
+  # OAuth2 provider configuration via Authentik OIDC
+  oauth:
+    - name: "Authentik"
+      provider: "openidConnect"
+      existingSecret: gitea-authentik-secret
+      autoDiscoverUrl: "https://auth.cubancodelab.net/application/o/gitea/.well-known/openid-configuration"
+
+  config:
+    server:
+      DOMAIN: git.cubancodelab.net
+      SSH_DOMAIN: git.cubancodelab.net
+      ROOT_URL: https://git.cubancodelab.net/
+      SSH_PORT: 22
+      SSH_LISTEN_PORT: 2222
+      HTTP_PORT: 3000
+    database:
+      DB_TYPE: postgres
+      HOST: postgresql.database.svc.cluster.local:5432
+      NAME: gitea
+      USER: gitea
+      SSL_MODE: disable
+      # PASSWD injected via additionalConfigFromEnvs below
+    security:
+      INSTALL_LOCK: "true"
+      PASSWORD_HASH_ALGO: pbkdf2
+    session:
+      PROVIDER: db
+    cache:
+      ADAPTER: memory
+    queue:
+      TYPE: channel
+    actions:
+      ENABLED: "true"
+      DEFAULT_ACTIONS_URL: "https://github.com"
+
+  # Inject DB password from sealed secret via env var
+  additionalConfigFromEnvs:
+    - name: GITEA__DATABASE__PASSWD
+      valueFrom:
+        secretKeyRef:
+          name: gitea-config
+          key: db-password
+
+# Persistence (for git repos and attachments)
+# Using NFS SSD from NAS instead of Longhorn to save space
+persistence:
+  enabled: true
+  existingClaim: gitea-shared-storage
+
+# Resource limits
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 250m
+    memory: 512Mi

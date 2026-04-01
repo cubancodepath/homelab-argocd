@@ -20,7 +20,7 @@ spec:
       helm:
         valueFiles:
           - $values/infrastructure/metallb/values.yaml
-    - repoURL: git@github.com:barbar0jav1er/homelab-argocd.git
+    - repoURL: https://github.com/cubancodepath/homelab-argocd.git
       targetRevision: main
       ref: values
   destination:
@@ -45,7 +45,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: git@github.com:barbar0jav1er/homelab-argocd.git
+    repoURL: https://github.com/cubancodepath/homelab-argocd.git
     targetRevision: HEAD
     path: infrastructure/metallb/config
   destination:
