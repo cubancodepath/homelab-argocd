@@ -1,0 +1,25 @@
+global:
+  imageRegistry: public.ecr.aws
+
+architecture: standalone
+
+auth:
+  enabled: true
+  existingSecret: redis-secret
+  existingSecretPasswordKey: password
+
+master:
+  persistence:
+    enabled: true
+    size: 5Gi
+    storageClass: longhorn-2replicas
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+metrics:
+  enabled: false
