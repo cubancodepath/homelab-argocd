@@ -1,0 +1,101 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: authentik-blueprint-import-outline-gitops
+  namespace: authentik
+  annotations:
+    argocd.argoproj.io/sync-wave: "6"
+spec:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 300
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: blueprint-import
+          image: python:3.12-alpine
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: AUTHENTIK_URL
+              value: "https://auth.cubancodelab.net"
+            - name: AUTHENTIK_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: authentik-blueprints
+                  key: AUTHENTIK_TOKEN
+            - name: OUTLINE_GITOPS_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: authentik-blueprints
+                  key: OUTLINE_GITOPS_CLIENT_ID
+            - name: OUTLINE_GITOPS_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: authentik-blueprints
+                  key: OUTLINE_GITOPS_CLIENT_SECRET
+          command:
+            - /bin/sh
+            - -c
+            - |
+              python - <<'PY'
+              import json
+              import os
+              import sys
+              import urllib.request
+              from string import Template
+
+              base_url = os.environ["AUTHENTIK_URL"].rstrip("/")
+              token = os.environ["AUTHENTIK_TOKEN"]
+
+              with open("/blueprints/outline-gitops.yaml", "r", encoding="utf-8") as handle:
+                  content = Template(handle.read()).substitute(os.environ)
+
+              payload = {
+                  "name": "outline-gitops",
+                  "content": content,
+                  "managed": True,
+              }
+
+              headers = {
+                  "Authorization": f"Bearer {token}",
+                  "Content-Type": "application/json",
+              }
+
+              list_url = f"{base_url}/api/v3/blueprints/instances/?page_size=200"
+              request = urllib.request.Request(list_url, headers=headers)
+              with urllib.request.urlopen(request) as response:
+                  data = json.loads(response.read().decode("utf-8"))
+
+              existing = None
+              for item in data.get("results", []):
+                  if item.get("name") == "outline-gitops":
+                      existing = item
+                      break
+
+              if existing:
+                  instance_id = existing.get("pk") or existing.get("id")
+                  if not instance_id:
+                      raise RuntimeError("Blueprint instance id not found")
+                  url = f"{base_url}/api/v3/blueprints/instances/{instance_id}/"
+                  method = "PATCH"
+              else:
+                  url = f"{base_url}/api/v3/blueprints/instances/"
+                  method = "POST"
+
+              request = urllib.request.Request(
+                  url,
+                  data=json.dumps(payload).encode("utf-8"),
+                  headers=headers,
+                  method=method,
+              )
+              with urllib.request.urlopen(request) as response:
+                  body = response.read().decode("utf-8")
+                  print(body)
+              PY
+          volumeMounts:
+            - name: blueprints
+              mountPath: /blueprints
+      volumes:
+        - name: blueprints
+          configMap:
+            name: authentik-blueprint-outline-gitops
