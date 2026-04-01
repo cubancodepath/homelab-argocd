@@ -30,7 +30,9 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - SkipDryRunOnMissingResource=true
-  # Ignore all Job statuses (migrations, buckets, etc. are one-time)
+  # Ignore Job spec diffs (migrations, buckets, etc. are one-time)
   ignoreDifferences:
     - group: batch
       kind: Job
+      jsonPointers:
+        - /spec
