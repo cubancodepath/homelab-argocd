@@ -32,9 +32,14 @@ ingress:
 
 persistence:
   enabled: true
-  existingClaim: nextcloud-data-pvc
-  accessMode: ReadWriteMany
-  size: 2Ti
+  existingClaim: nextcloud-app-pvc
+  accessMode: ReadWriteOnce
+  size: 5Gi
+  nextcloudData:
+    enabled: true
+    existingClaim: nextcloud-data-pvc
+    accessMode: ReadWriteMany
+    size: 2Ti
 
 internalDatabase:
   enabled: false
