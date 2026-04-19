@@ -34,7 +34,7 @@ ingress:
 # Persistent storage for data
 persistence:
   enabled: true
-  storageClass: "longhorn"
+  storageClass: "longhorn-2replicas"
   size: "2Gi"
 
 # Resource limits and requests

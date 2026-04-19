@@ -5,8 +5,8 @@ Instancia centralizada de PostgreSQL para el cluster homelab.
 ## Configuración
 
 - **Namespace**: `database`
-- **StorageClass**: `longhorn`
-- **Tamaño almacenamiento**: 50Gi
+- **StorageClass**: `longhorn-2replicas`
+- **Tamaño almacenamiento**: 5Gi
 - **Usuario admin**: `postgres`
 
 ## Credenciales

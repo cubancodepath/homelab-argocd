@@ -5,7 +5,7 @@
 postgres:
   local_setup: false
   # Do NOT uncomment the following - use external_secrets instead
-  # storageClass: "nfs-ssd-fast"
+  # storageClass: "nfs-ssd"
 
 minio:
   local_setup: true
@@ -19,7 +19,7 @@ minio:
 redis:
   local_setup: true
   image: "valkey/valkey:7.2.11-alpine"
-  storageClass: "longhorn"
+  storageClass: "longhorn-2replicas"
   volumeSize: "100Mi"
 
 rabbitmq:

@@ -77,7 +77,7 @@ redis:
     persistence:
       enabled: true
       size: 5Gi
-      storageClassName: longhorn
+      storageClassName: longhorn-2replicas
 
   resources:
     requests:

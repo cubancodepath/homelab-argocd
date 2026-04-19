@@ -67,6 +67,9 @@ Tiered storage with Longhorn for HA and NFS for bulk data:
 
 Direct media storage is handled by a static NFS PVC (`shared-media-pvc`) on `/volume2/media`.
 
+Deprecated aliases are no longer valid for new workloads (`nfs-ssd-fast`, `nfs-hdd-bulk`, `fast-ssd-critical`, `nfs-media-direct`).
+Use the canonical mapping in `docs/storage-classes.md`.
+
 ## 🚀 Applications
 
 ### Productivity
