@@ -1,0 +1,84 @@
+image:
+  flavor: apache
+
+nextcloud:
+  host: nextcloud.cubancodelab.net
+  trustedDomains:
+    - nextcloud.cubancodelab.net
+  existingSecret:
+    enabled: true
+    secretName: nextcloud-admin-secret
+    usernameKey: nextcloud-username
+    passwordKey: nextcloud-password
+
+phpClientHttpsFix:
+  enabled: true
+  protocol: https
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+  labels: {}
+  path: /
+  pathType: Prefix
+  tls:
+    - secretName: nextcloud-tls
+      hosts:
+        - nextcloud.cubancodelab.net
+
+persistence:
+  enabled: true
+  existingClaim: nextcloud-data-pvc
+  accessMode: ReadWriteMany
+  size: 2Ti
+
+internalDatabase:
+  enabled: false
+
+externalDatabase:
+  enabled: true
+  type: postgresql
+  host: postgresql.database.svc.cluster.local
+  database: nextcloud
+  existingSecret:
+    enabled: true
+    secretName: nextcloud-db-secret
+    usernameKey: db-username
+    passwordKey: db-password
+
+externalRedis:
+  enabled: false
+
+redis:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: true
+    existingSecret: nextcloud-redis-secret
+    existingSecretPasswordKey: redis-password
+  global:
+    storageClass: longhorn-2replicas
+  master:
+    persistence:
+      enabled: true
+      size: 2Gi
+      storageClass: longhorn-2replicas
+  replica:
+    persistence:
+      enabled: false
+
+cronjob:
+  enabled: true
+  type: cronjob
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 2000m
+    memory: 4Gi
