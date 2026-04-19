@@ -41,6 +41,19 @@ worker:
     - secretRef:
         name: authentik
 
+  startupProbe:
+    timeoutSeconds: 10
+    failureThreshold: 90
+
+  readinessProbe:
+    timeoutSeconds: 10
+    failureThreshold: 6
+
+  livenessProbe:
+    initialDelaySeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 6
+
   resources:
     requests:
       cpu: 100m
