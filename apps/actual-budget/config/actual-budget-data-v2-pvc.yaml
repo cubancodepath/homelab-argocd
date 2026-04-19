@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: actual-budget-data-v2
+  namespace: actual
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn-2replicas
+  resources:
+    requests:
+      storage: 2Gi

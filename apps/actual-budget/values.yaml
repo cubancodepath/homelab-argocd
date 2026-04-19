@@ -36,6 +36,7 @@ persistence:
   enabled: true
   storageClass: "longhorn-2replicas"
   size: "2Gi"
+  existingClaim: "actual-budget-data-v2"
 
 # Resource limits and requests
 resources:

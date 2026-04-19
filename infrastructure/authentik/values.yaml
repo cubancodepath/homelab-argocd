@@ -78,6 +78,7 @@ redis:
       enabled: true
       size: 5Gi
       storageClassName: longhorn-2replicas
+      existingClaim: authentik-redis-data-v2
 
   resources:
     requests:
