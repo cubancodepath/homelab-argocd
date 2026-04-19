@@ -74,6 +74,11 @@ redis:
 cronjob:
   enabled: true
   type: cronjob
+  cronjob:
+    securityContext:
+      runAsUser: 33
+      runAsGroup: 33
+      runAsNonRoot: true
 
 startupProbe:
   enabled: true
