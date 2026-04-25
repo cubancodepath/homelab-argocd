@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: silverbullet
+  namespace: silverbullet
+  labels:
+    app.kubernetes.io/name: silverbullet
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: silverbullet
+  ports:
+    - name: http
+      port: 3000
+      targetPort: http

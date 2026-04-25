@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: silverbullet
+  namespace: silverbullet
+  labels:
+    app.kubernetes.io/name: silverbullet
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: silverbullet
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: silverbullet
+    spec:
+      containers:
+        - name: silverbullet
+          image: ghcr.io/silverbulletmd/silverbullet:2.6.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: TZ
+              value: Asia/Dubai
+            - name: SB_FOLDER
+              value: /space
+            - name: SB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: silverbullet-secret
+                  key: SB_USER
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 5
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          volumeMounts:
+            - name: space
+              mountPath: /space
+      volumes:
+        - name: space
+          persistentVolumeClaim:
+            claimName: silverbullet-space
