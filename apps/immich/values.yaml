@@ -4,10 +4,11 @@ controllers:
       main:
         env:
           TZ: America/Havana
-          DB_HOSTNAME: postgresql.database.svc.cluster.local
+          DB_HOSTNAME: immich-postgresql
           DB_PORT: "5432"
           DB_USERNAME: immich
           DB_DATABASE_NAME: immich
+          DB_VECTOR_EXTENSION: vectorchord
           REDIS_HOSTNAME: redis-master.database.svc.cluster.local
           IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning:3003
         envFrom:
