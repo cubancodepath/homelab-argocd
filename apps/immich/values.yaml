@@ -5,7 +5,7 @@ controllers:
         image:
           tag: v2.7.5
         env:
-          TZ: America/Havana
+          TZ: Asia/Dubai
           DB_HOSTNAME: immich-postgresql
           DB_PORT: "5432"
           DB_USERNAME: immich
