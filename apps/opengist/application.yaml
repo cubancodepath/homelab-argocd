@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: opengist
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/cubancodepath/homelab-argocd.git
+      targetRevision: HEAD
+      path: apps/opengist/config
+      directory:
+        recurse: true
+        include: "*.yaml"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: opengist
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

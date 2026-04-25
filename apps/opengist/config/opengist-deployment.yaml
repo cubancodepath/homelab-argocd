@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opengist
+  namespace: opengist
+  labels:
+    app.kubernetes.io/name: opengist
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: opengist
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: opengist
+    spec:
+      containers:
+        - name: opengist
+          image: ghcr.io/thomiceli/opengist:1.12.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 6157
+              name: http
+          env:
+            - name: TZ
+              value: Asia/Dubai
+            - name: OG_EXTERNAL_URL
+              value: https://gist.cubancodelab.net
+            - name: OG_LOG_LEVEL
+              value: warn
+            - name: OG_SSH_GIT_ENABLED
+              value: "false"
+            - name: OG_HTTP_GIT_ENABLED
+              value: "true"
+            - name: OG_OIDC_PROVIDER_NAME
+              value: Authentik
+            - name: OG_OIDC_DISCOVERY_URL
+              value: https://auth.cubancodelab.net/application/o/opengist/.well-known/openid-configuration
+          envFrom:
+            - secretRef:
+                name: opengist-secret
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          readinessProbe:
+            httpGet:
+              path: /healthcheck
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 5
+          startupProbe:
+            httpGet:
+              path: /healthcheck
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          volumeMounts:
+            - name: data
+              mountPath: /opengist
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: opengist-data
