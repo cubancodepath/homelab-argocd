@@ -1,0 +1,77 @@
+controllers:
+  main:
+    containers:
+      main:
+        env:
+          TZ: America/Havana
+          DB_HOSTNAME: postgresql.database.svc.cluster.local
+          DB_PORT: "5432"
+          DB_USERNAME: immich
+          DB_DATABASE_NAME: immich
+          REDIS_HOSTNAME: redis-master.database.svc.cluster.local
+          IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning:3003
+        envFrom:
+          - secretRef:
+              name: immich-secret
+
+immich:
+  persistence:
+    library:
+      existingClaim: immich-library-pvc
+
+valkey:
+  enabled: false
+
+server:
+  enabled: true
+  ingress:
+    main:
+      enabled: true
+      className: traefik
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+        traefik.ingress.kubernetes.io/router.entrypoints: websecure
+        traefik.ingress.kubernetes.io/router.tls: "true"
+      hosts:
+        - host: immich.cubancodelab.net
+          paths:
+            - path: /
+              pathType: Prefix
+              service:
+                identifier: main
+      tls:
+        - secretName: immich-tls
+          hosts:
+            - immich.cubancodelab.net
+  controllers:
+    main:
+      containers:
+        main:
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 2000m
+              memory: 4Gi
+
+machine-learning:
+  enabled: true
+  persistence:
+    cache:
+      enabled: true
+      type: persistentVolumeClaim
+      size: 10Gi
+      accessMode: ReadWriteOnce
+      storageClass: longhorn-2replicas
+  controllers:
+    main:
+      containers:
+        main:
+          resources:
+            requests:
+              cpu: 250m
+              memory: 1Gi
+            limits:
+              cpu: 2000m
+              memory: 4Gi
