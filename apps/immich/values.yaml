@@ -60,15 +60,9 @@ server:
 
 machine-learning:
   enabled: true
-  persistence:
-    cache:
-      enabled: true
-      type: persistentVolumeClaim
-      size: 10Gi
-      accessMode: ReadWriteOnce
-      storageClass: longhorn-2replicas
   controllers:
     main:
+      strategy: Recreate
       containers:
         main:
           resources:
@@ -78,3 +72,10 @@ machine-learning:
             limits:
               cpu: 2000m
               memory: 4Gi
+  persistence:
+    cache:
+      enabled: true
+      type: persistentVolumeClaim
+      size: 10Gi
+      accessMode: ReadWriteOnce
+      storageClass: longhorn-2replicas
