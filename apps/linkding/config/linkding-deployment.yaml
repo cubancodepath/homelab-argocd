@@ -49,12 +49,15 @@ spec:
               value: "https://auth.cubancodelab.net/application/o/userinfo/"
             - name: OIDC_OP_JWKS_ENDPOINT
               value: "https://auth.cubancodelab.net/application/o/linkding/jwks/"
-            - name: OIDC_RP_CLIENT_ID
-              value: "linkding"
             - name: OIDC_RP_SCOPES
               value: "openid email profile"
             - name: OIDC_USERNAME_CLAIM
               value: preferred_username
+            - name: OIDC_RP_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: linkding-secret
+                  key: OIDC_RP_CLIENT_ID
             - name: OIDC_RP_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
