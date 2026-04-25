@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkding
+  namespace: linkding
+  labels:
+    app.kubernetes.io/name: linkding
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: linkding
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: linkding
+    spec:
+      containers:
+        - name: linkding
+          image: ghcr.io/sissbruecker/linkding:1.45.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9090
+              name: http
+          env:
+            - name: TZ
+              value: Asia/Dubai
+            - name: LD_DB_ENGINE
+              value: postgres
+            - name: LD_DB_HOST
+              value: postgresql.database.svc.cluster.local
+            - name: LD_DB_PORT
+              value: "5432"
+            - name: LD_DB_DATABASE
+              value: linkding
+            - name: LD_DB_USER
+              value: linkding
+            - name: LD_CSRF_TRUSTED_ORIGINS
+              value: "https://links.cubancodelab.net"
+            - name: LD_USE_X_FORWARDED_HOST
+              value: "true"
+          envFrom:
+            - secretRef:
+                name: linkding-secret
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 5
+          volumeMounts:
+            - name: data
+              mountPath: /etc/linkding/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: linkding-data
