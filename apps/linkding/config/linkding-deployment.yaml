@@ -58,7 +58,7 @@ spec:
             - name: OIDC_RP_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: linkding-oidc-secret
+                  name: linkding-secret
                   key: OIDC_RP_CLIENT_SECRET
           envFrom:
             - secretRef:
