@@ -25,6 +25,8 @@ spec:
           env:
             - name: TZ
               value: Asia/Dubai
+            - name: LD_ENABLE_OIDC
+              value: "True"
             - name: LD_DB_ENGINE
               value: postgres
             - name: LD_DB_HOST
@@ -39,6 +41,25 @@ spec:
               value: "https://links.cubancodelab.net"
             - name: LD_USE_X_FORWARDED_HOST
               value: "true"
+            - name: OIDC_OP_AUTHORIZATION_ENDPOINT
+              value: "https://auth.cubancodelab.net/application/o/authorize/"
+            - name: OIDC_OP_TOKEN_ENDPOINT
+              value: "https://auth.cubancodelab.net/application/o/token/"
+            - name: OIDC_OP_USER_ENDPOINT
+              value: "https://auth.cubancodelab.net/application/o/userinfo/"
+            - name: OIDC_OP_JWKS_ENDPOINT
+              value: "https://auth.cubancodelab.net/application/o/linkding/jwks/"
+            - name: OIDC_RP_CLIENT_ID
+              value: "linkding"
+            - name: OIDC_RP_SCOPES
+              value: "openid email profile"
+            - name: OIDC_USERNAME_CLAIM
+              value: preferred_username
+            - name: OIDC_RP_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: linkding-oidc-secret
+                  key: OIDC_RP_CLIENT_SECRET
           envFrom:
             - secretRef:
                 name: linkding-secret
