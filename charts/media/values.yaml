@@ -12,16 +12,16 @@ jellyfin:
   nameOverride: ""
   fullnameOverride: ""
   replicaCount: 1
-  
+
   image:
     repository: jellyfin/jellyfin
     tag: "10.10.7"
     pullPolicy: IfNotPresent
-  
+
   service:
     type: ClusterIP
     port: 8096
-  
+
   ingress:
     enabled: true
     className: ""
@@ -37,37 +37,37 @@ jellyfin:
       - hosts:
           - jellyfin.cubancodelab.net
         secretName: jellyfin-tls
-  
+
   persistence:
     config:
       enabled: true
       storageClass: "longhorn"
       accessMode: ReadWriteOnce
       size: 10Gi
-    
+
     cache:
       emptyDir:
         sizeLimit: 5Gi
-    
+
     media:
       enabled: true
       storageClass: ""
       accessMode: ReadWriteMany
       size: 100Gi
       existingClaim: "shared-media-pvc"
-  
+
   env:
     JELLYFIN_PublishedServerUrl: "https://jellyfin.cubancodelab.net"
     TZ: "Asia/Dubai"
-    
+
   extraEnv: []
-  
+
   securityContext:
     runAsUser: 1000
     runAsGroup: 1000
     fsGroup: 1000
     runAsNonRoot: true
-  
+
   resources:
     limits:
       cpu: 2000m
@@ -77,14 +77,14 @@ jellyfin:
       cpu: 500m
       memory: 1Gi
       gpu.intel.com/i915: 1
-  
+
   hardwareAcceleration:
     enabled: true
     type: "intel"
     intel:
       enableDevices: true
       renderGroup: 993
-  
+
   healthChecks:
     liveness:
       enabled: true
@@ -96,7 +96,7 @@ jellyfin:
       timeoutSeconds: 5
       failureThreshold: 3
       successThreshold: 1
-    
+
     readiness:
       enabled: true
       httpGet:
@@ -107,7 +107,7 @@ jellyfin:
       timeoutSeconds: 3
       failureThreshold: 3
       successThreshold: 1
-    
+
     startup:
       enabled: true
       httpGet:
@@ -118,28 +118,28 @@ jellyfin:
       timeoutSeconds: 5
       failureThreshold: 30
       successThreshold: 1
-  
+
   serviceAccount:
     create: true
     name: ""
     annotations: {}
-  
+
   nodeSelector:
     gpu.intel.com/device-id.0300-46a6.present: "true"
 
 # Radarr - Movie management
 radarr:
   enabled: true
-  
+
   env:
     PUID: "1000"
     PGID: "1000"
     TZ: "Asia/Dubai"
-  
+
   service:
     type: ClusterIP
     port: 7878
-  
+
   ingress:
     enabled: true
     className: "traefik"
@@ -150,7 +150,7 @@ radarr:
     tls:
       enabled: true
       secretName: radarr-tls
-  
+
   persistence:
     config:
       enabled: true
@@ -159,7 +159,7 @@ radarr:
     media:
       enabled: true
       existingClaim: "shared-media-pvc"
-  
+
   resources:
     limits:
       cpu: 500m
@@ -171,16 +171,16 @@ radarr:
 # Sonarr - TV series management
 sonarr:
   enabled: true
-  
+
   env:
     PUID: "1000"
     PGID: "1000"
     TZ: "Asia/Dubai"
-  
+
   service:
     type: ClusterIP
     port: 8989
-  
+
   ingress:
     enabled: true
     className: "traefik"
@@ -191,7 +191,7 @@ sonarr:
     tls:
       enabled: true
       secretName: sonarr-tls
-  
+
   persistence:
     config:
       enabled: true
@@ -207,12 +207,12 @@ seerr:
   nameOverride: ""
   fullnameOverride: ""
   replicaCount: 1
-  
+
   image:
     repository: ghcr.io/seerr-team/seerr
-    tag: "v3.0.1"
+    tag: "v3.2.0"
     pullPolicy: IfNotPresent
-  
+
   env:
     PUID: "1000"
     PGID: "1000"
@@ -232,11 +232,11 @@ seerr:
       database: "seerr"
       existingSecret: "seerr-db-secret"
       passwordKey: "password"
-  
+
   service:
     type: ClusterIP
     port: 5055
-  
+
   ingress:
     enabled: true
     className: ""
@@ -247,14 +247,14 @@ seerr:
     tls:
       enabled: true
       secretName: seerr-tls
-  
+
   persistence:
     config:
       enabled: true
       size: 1Gi
       storageClass: "longhorn"
       existingClaim: ""
-  
+
   resources:
     limits:
       cpu: 500m
@@ -262,7 +262,7 @@ seerr:
     requests:
       cpu: 100m
       memory: 128Mi
-  
+
   livenessProbe:
     httpGet:
       path: /api/v1/status
@@ -271,7 +271,7 @@ seerr:
     periodSeconds: 30
     timeoutSeconds: 5
     failureThreshold: 3
-  
+
   readinessProbe:
     httpGet:
       path: /api/v1/status
@@ -280,7 +280,7 @@ seerr:
     periodSeconds: 10
     timeoutSeconds: 3
     failureThreshold: 3
-  
+
   startupProbe:
     httpGet:
       path: /api/v1/status
@@ -289,7 +289,7 @@ seerr:
     periodSeconds: 10
     timeoutSeconds: 3
     failureThreshold: 15
-  
+
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -297,16 +297,16 @@ seerr:
 # Prowlarr - Indexer manager
 prowlarr:
   enabled: true
-  
+
   env:
     PUID: "1000"
     PGID: "1000"
     TZ: "Asia/Dubai"
-  
+
   service:
     type: ClusterIP
     port: 9696
-  
+
   ingress:
     enabled: true
     className: ""
@@ -317,7 +317,7 @@ prowlarr:
     tls:
       enabled: true
       secretName: prowlarr-tls
-  
+
   persistence:
     config:
       enabled: true
@@ -327,23 +327,23 @@ prowlarr:
 # qBittorrent with Gluetun VPN - Torrent client
 qbittorrent:
   enabled: false
-  
+
   # Pod Security Context - Required for VPN functionality
   podSecurityContext:
     runAsNonRoot: false
     runAsUser: 0
     fsGroup: 0
-  
+
   # qBittorrent Container Configuration
   qbittorrent:
     image:
       repository: linuxserver/qbittorrent
       tag: 5.1.0
       pullPolicy: IfNotPresent
-    
+
     securityContext: {}
     bittorrentPort: 6881
-    
+
     env:
       - name: PUID
         value: "1000"
@@ -353,12 +353,12 @@ qbittorrent:
         value: "Asia/Dubai"
       - name: WEBUI_PORT
         value: "8080"
-    
+
     extraEnv: []
-    
+
     service:
       port: 8080
-    
+
     persistence:
       config:
         enabled: true
@@ -367,7 +367,7 @@ qbittorrent:
         accessMode: ReadWriteOnce
         size: 5Gi
         mountPath: /config
-      
+
       downloads:
         enabled: true
         existingClaim: "shared-media-pvc"
@@ -375,10 +375,10 @@ qbittorrent:
         accessMode: ReadWriteOnce
         size: 100Gi
         mountPath: /downloads
-    
+
     extraVolumeMounts: []
     extraVolumes: []
-  
+
   # Health Check Probes
   probes:
     liveness:
@@ -389,7 +389,7 @@ qbittorrent:
       timeoutSeconds: 5
       failureThreshold: 3
       successThreshold: 1
-    
+
     readiness:
       enabled: true
       path: /
@@ -398,22 +398,22 @@ qbittorrent:
       timeoutSeconds: 5
       failureThreshold: 3
       successThreshold: 1
-  
+
   # Gluetun VPN Sidecar Container Configuration
   gluetun:
     enabled: true
-    
+
     image:
       repository: qmcgaw/gluetun
       tag: v3.40.0
       pullPolicy: IfNotPresent
-    
+
     securityContext:
       privileged: true
       capabilities:
         add:
           - NET_ADMIN
-    
+
     # ProtonVPN Configuration
     vpn:
       provider: "protonvpn"
@@ -422,12 +422,12 @@ qbittorrent:
       serverCities: ""
       serverNames: ""
       randomize: "true"
-      
+
       openvpn:
         OPENVPN_PROTOCOL: "udp"
         PROTONVPN_TIER: "2"
         SERVER_FEATURES: "p2p"
-      
+
       wireguard:
         privateKey: ""
         privateKeyExistingSecret: ""
@@ -436,7 +436,7 @@ qbittorrent:
         endpointIP: ""
         endpointPort: ""
         publicKey: ""
-    
+
     # ProtonVPN Credentials (will use sealed secret for username/password)
     credentials:
       create: false
@@ -445,7 +445,7 @@ qbittorrent:
       existingSecret: "protonvpn-credentials"
       usernameKey: "username"
       passwordKey: "password"
-    
+
     # Gluetun Settings
     settings:
       FIREWALL: "on"
@@ -457,13 +457,13 @@ qbittorrent:
       FIREWALL_DEBUG: "on"
       JOURNALD: "off"
       VPN_PORT_FORWARDING: "off"
-    
+
     extraEnv:
       - name: LOG_LEVEL
         value: "info"
-    
+
     extraPorts: []
-    
+
     resources:
       limits:
         cpu: 500m
@@ -471,7 +471,7 @@ qbittorrent:
       requests:
         cpu: 200m
         memory: 256Mi
-    
+
     persistence:
       enabled: true
       useEmptyDir: false
@@ -479,15 +479,15 @@ qbittorrent:
       storageClass: "longhorn"
       accessMode: ReadWriteOnce
       size: 100Mi
-      
+
     extraVolumeMounts: []
     extraVolumes: []
-  
+
   # Kubernetes Service Configuration
   service:
     type: ClusterIP
     port: 8080
-  
+
   # Ingress Configuration
   ingress:
     enabled: true
@@ -495,27 +495,27 @@ qbittorrent:
     annotations:
       cert-manager.io/cluster-issuer: "letsencrypt-prod"
       traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
-    
+
     hosts:
       - host: qbittorrent.cubancodelab.net
         paths:
           - path: /
             pathType: Prefix
-    
+
     tls:
       - hosts:
           - qbittorrent.cubancodelab.net
         secretName: qbittorrent-tls
-  
+
   # Pod Scheduling and Placement
   nodeSelector: {}
   tolerations: []
   affinity: {}
-  
+
   # Pod Annotations and Additional Configuration
   podAnnotations: {}
   extraVolumes: []
-  
+
   # Development and Debugging Options
   hostNetwork: false
   initContainers: []
@@ -523,27 +523,27 @@ qbittorrent:
 # Flaresolverr - Cloudflare solver
 flaresolverr:
   enabled: true
-  
+
   service:
     type: ClusterIP
     port: 8191
-  
+
   ingress:
     enabled: false
 
 # Bazarr - Subtitle management
 bazarr:
   enabled: true
- 
+
   env:
     PUID: "1000"
     PGID: "1000"
     TZ: "Asia/Dubai"
-  
+
   service:
     type: ClusterIP
     port: 6767
-  
+
   ingress:
     enabled: true
     className: ""
@@ -554,7 +554,7 @@ bazarr:
     tls:
       enabled: true
       secretName: bazarr-tls
-  
+
   persistence:
     config:
       enabled: true
