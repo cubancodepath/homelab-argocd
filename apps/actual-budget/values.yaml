@@ -1,6 +1,6 @@
 image:
   pullPolicy: Always
-  tag: 26.5.2
+  tag: 26.6.0
 
 actualBudget:
   port: 5006
